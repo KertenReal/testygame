@@ -24,11 +24,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg libnss3 libgbm1
 
+      - name: Betik konumunu ve bütünlüğünü doğrula
+        id: locate
+        run: |
+          SCRIPT_PATH="$(find . -maxdepth 3 -name 'ketrawos-build.sh' -print -quit)"
+          if [ -z "$SCRIPT_PATH" ]; then
+            echo "HATA: Repoda ketrawos-build.sh dosyası bulunamadı!"
+            exit 1
+          fi
+          if ! grep -q "TAMAMLANDI" "$SCRIPT_PATH"; then
+            echo "HATA: $SCRIPT_PATH dosyası eksik veya yarım kopyalanmış! Önceki mesajdaki ketrawos-build.sh kodunu en alt satıra kadar eksiksiz yapıştırın."
+            exit 1
+          fi
+          echo "dir=$(dirname "$SCRIPT_PATH")" >> "$GITHUB_OUTPUT"
+          echo "Bulunan betik: $SCRIPT_PATH"
+
       - name: Güvenlik kontrolü ve HyperFrames ile videoları üret
+        working-directory: ${{ steps.locate.outputs.dir }}
         run: bash ketrawos-build.sh
+
+      - name: Üretilen videoları doğrula
+        run: find . -name "*.mp4" -exec ls -lh {} +
 
       - name: Üretilen iki MP4 videoyu indirilebilir yap
         uses: actions/upload-artifact@v4
         with:
           name: ketrawos-240x240-videos
-          path: ketrawos-workspace/output/*.mp4
+          path: "**/ketrawos-workspace/output/*.mp4"
+          if-no-files-found: error
