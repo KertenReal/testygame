@@ -2,10 +2,15 @@
 set -euo pipefail
 
 # ==============================================================================
-# KetraWOS Dual Boot (KetraWOS 1 & Kısa TCL Geçişi) Video Üretici (240x240)
+# KetraWOS 1 — Tüm 3 Videoyu Üreten Birleşik HyperFrames Betiği (240x240, 60fps)
+# Çıktılar:
+#   1) ketrawos-logo-morph-240x240.mp4     (10.0s — Kristal <-> Saat Döngüsü)
+#   2) ketrawos-dualboot-ketra-240x240.mp4 ( 6.5s — Dual Boot: KetraWOS 1)
+#   3) ketrawos-dualboot-tcl-240x240.mp4   ( 1.7s — Dual Boot: Kısa TCL)
 # ==============================================================================
 
 WORKDIR="$(pwd)/ketrawos-workspace"
+MORPH_DIR="$WORKDIR/projects/ketrawos-logo-morph"
 KETRA_DIR="$WORKDIR/projects/ketrawos-dualboot-ketra"
 TCL_DIR="$WORKDIR/projects/ketrawos-dualboot-tcl"
 OUT_DIR="$WORKDIR/output"
@@ -30,7 +35,7 @@ ok "Node.js $(node -v), FFmpeg ve FFprobe hazır."
 
 # 2. HyperFrames Kurulumu
 log "2/6 — HyperFrames kuruluyor ($WORKDIR)..."
-mkdir -p "$WORKDIR" "$KETRA_DIR/assets/fonts" "$TCL_DIR/assets/fonts" "$OUT_DIR"
+mkdir -p "$WORKDIR" "$MORPH_DIR/assets/fonts" "$KETRA_DIR/assets/fonts" "$TCL_DIR/assets/fonts" "$OUT_DIR"
 cd "$WORKDIR"
 
 if [ ! -f "$WORKDIR/package.json" ]; then
@@ -107,12 +112,142 @@ node -e '
     console.error("Varlık doğrulama hatası:", err.message);
     process.exit(1);
   });
-' "$KETRA_DIR/assets/fonts/lexend.woff2" "$TCL_DIR/assets/fonts/lexend.woff2"
+' "$MORPH_DIR/assets/fonts/lexend.woff2" "$KETRA_DIR/assets/fonts/lexend.woff2" "$TCL_DIR/assets/fonts/lexend.woff2"
 ok "GSAP ve Lexend fontu güvenle doğrulandı."
 
-# 4. İki Dual Boot Kompozisyonunu Oluşturma
-log "4/6 — Dual Boot (KetraWOS 1 + Kısa TCL) projeleri oluşturuluyor..."
+# 4. Tüm 3 Kompozisyon Dosyasını Oluşturma
+log "4/6 — 3 video projesi oluşturuluyor..."
 
+# --- PROJE 1: Logo Dönüşüm Döngüsü (10s) ---
+cat <<'EOF' > "$MORPH_DIR/index.html"
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=240, height=240" />
+  <title>KetraWOS 1 — Logo Morph Loop 10s (240x240)</title>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+  <style>
+    @font-face {
+      font-family: "Lexend";
+      src: url("assets/fonts/lexend.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 240px; height: 240px; overflow: hidden; background: #000000; }
+    #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000000; font-family: "Lexend", sans-serif; }
+    .clip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    #morph-stage { position: relative; width: 240px; height: 240px; }
+    #logo-svg { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
+    #brand-row { position: absolute; top: 201px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; }
+    #ketra-word { display: inline-block; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; letter-spacing: -0.01em; color: #ffffff; opacity: 0; }
+    #ver-badge { display: inline-block; width: 10px; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; text-align: center; color: #ffffff; opacity: 0; }
+  </style>
+</head>
+<body>
+  <div id="root" data-composition-id="ketrawos-logo-morph" data-start="0" data-duration="10" data-width="240" data-height="240">
+    <section id="morph-clip" class="clip" data-start="0" data-duration="10" data-track-index="1">
+      <div id="morph-stage">
+        <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
+          <g id="hand-top-group">
+            <path id="top-dark" d="M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z" fill="#8C0020" />
+            <path id="top-light" d="M 104.0,94.0 L 104.0,63.0 L 120.0,44.0 L 136.0,63.0 L 136.0,94.0 Z" fill="#FF0055" />
+          </g>
+          <g id="hand-lb-group">
+            <path id="lb-dark" d="M 125.8,136.1 L 75.5,165.1 L 45.5,157.0 L 53.5,127.0 L 103.8,98.0 Z" fill="#8A5A00" />
+            <path id="lb-light" d="M 117.6,133.8 L 75.2,158.3 L 50.7,154.0 L 59.1,130.7 L 101.6,106.2 Z" fill="#DD9500" />
+          </g>
+          <g id="hand-rb-group">
+            <path id="rb-dark" d="M 136.2,98.0 L 186.4,127.0 L 194.5,157.0 L 164.4,165.1 L 114.2,136.1 Z" fill="#008CAA" />
+            <path id="rb-light" d="M 138.4,106.2 L 180.8,130.7 L 189.3,154.0 L 164.8,158.3 L 122.4,133.8 Z" fill="#82E9FF" />
+          </g>
+          <circle id="center-dot-outer" cx="120.0" cy="114.0" r="34.6" fill="#950000" />
+          <circle id="center-dot-inner" cx="120.0" cy="114.0" r="28.4" fill="#E00000" />
+        </svg>
+
+        <div id="brand-row">
+          <span id="ketra-word">KetraWOS</span>
+          <span id="ver-badge">1</span>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    const SPIN_LOOPS = 1;
+    const SHAPES = {
+      topDarkOrig:  "M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z",
+      topDarkHand:  "M 117.0,104.0 L 117.0,32.0 L 120.0,32.0 L 123.0,32.0 L 123.0,104.0 Z",
+      topLightOrig: "M 104.0,94.0 L 104.0,63.0 L 120.0,44.0 L 136.0,63.0 L 136.0,94.0 Z",
+      topLightHand: "M 118.3,104.0 L 118.3,34.2 L 120.0,34.2 L 121.7,34.2 L 121.7,104.0 Z",
+      lbDarkOrig:   "M 125.8,136.1 L 75.5,165.1 L 45.5,157.0 L 53.5,127.0 L 103.8,98.0 Z",
+      lbDarkHand:   "M 112.8,121.6 L 73.0,144.6 L 71.5,142.0 L 70.0,139.4 L 109.8,116.4 Z",
+      lbLightOrig:  "M 117.6,133.8 L 75.2,158.3 L 50.7,154.0 L 59.1,130.7 L 101.6,106.2 Z",
+      lbLightHand:  "M 112.2,120.5 L 74.3,142.4 L 73.4,140.9 L 72.6,139.4 L 110.5,117.5 Z",
+      rbDarkOrig:   "M 136.2,98.0 L 186.4,127.0 L 194.5,157.0 L 164.4,165.1 L 114.2,136.1 Z",
+      rbDarkHand:   "M 130.2,116.4 L 183.9,147.4 L 182.4,150.0 L 180.9,152.6 L 127.2,121.6 Z",
+      rbLightOrig:  "M 138.4,106.2 L 180.8,130.7 L 189.3,154.0 L 164.8,158.3 L 122.4,133.8 Z",
+      rbLightHand:  "M 129.5,117.5 L 181.3,147.4 L 180.4,148.9 L 179.6,150.4 L 127.8,120.5 Z"
+    };
+
+    gsap.set("#ketra-word", { x: 7.5, y: -97, scale: 0.5 });
+    gsap.set("#ver-badge", { scale: 0.6 });
+
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.6, ease: "power2.inOut" }, 0);
+
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.9, ease: "power2.out" }, 0.1);
+    tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.66, ease: "power3.inOut" }, 1.02);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 1.68);
+
+    tl.to("#hand-top-group", { rotation: 1800, svgOrigin: "120 114", duration: 2.0, ease: "power1.in" }, 2.0);
+    tl.to("#hand-rb-group",  { rotation: 1080, svgOrigin: "120 114", duration: 2.0, ease: "power1.in" }, 2.0);
+    tl.to("#hand-lb-group",  { rotation: 180,  svgOrigin: "120 114", duration: 2.0, ease: "power1.in" }, 2.0);
+
+    let tCursor = 4.0, aTop = 1800, aRb = 1080, aLb = 180;
+    for (let k = 0; k < SPIN_LOOPS; k++) {
+      aTop += 3600; aRb += 2160; aLb += 360;
+      tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 2.0, ease: "none" }, tCursor);
+      tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 2.0, ease: "none" }, tCursor);
+      tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 2.0, ease: "none" }, tCursor);
+      tCursor += 2.0;
+    }
+
+    aTop += 1800; aRb += 1080; aLb += 180;
+    tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 2.0, ease: "power1.out" }, tCursor);
+    tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 2.0, ease: "power1.out" }, tCursor);
+    tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 2.0, ease: "power1.out" }, tCursor);
+    tCursor += 2.0;
+
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.3, ease: "power2.in" }, tCursor + 0.02);
+    tl.to("#ketra-word", { opacity: 0.75, x: 7.5, y: -97, scale: 0.5, duration: 0.66, ease: "power3.inOut" }, tCursor + 0.32);
+    tl.to("#ketra-word", { opacity: 0, duration: 0.9, ease: "power2.in" }, tCursor + 1.0);
+
+    const revShapeStart = tCursor + 0.4;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+
+    window.__timelines = window.__timelines || {};
+    window.__timelines["ketrawos-logo-morph"] = tl;
+  </script>
+</body>
+</html>
+EOF
+
+# --- PROJE 2: Dual Boot -> KetraWOS 1 (6.5s) ---
 cat <<'EOF' > "$KETRA_DIR/index.html"
 <!doctype html>
 <html lang="tr">
@@ -148,7 +283,6 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
   <div id="root" data-composition-id="ketrawos-dualboot-ketra" data-start="0" data-duration="6.5" data-width="240" data-height="240">
     <section id="dualboot-clip" class="clip" data-start="0" data-duration="6.5" data-track-index="1">
       <div id="dualboot-stage">
-        <!-- HTML sarmalayıcı x/y/scale taşır, SVG sadece (120,108) etrafında döndürür -->
         <div id="clock-wrap">
           <svg id="clock-svg" viewBox="0 0 240 240" width="240" height="240">
             <g id="hand-top-group">
@@ -189,13 +323,10 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
   </div>
   <script>
     const SPIN_CYCLES = 1;
-
     gsap.set("#clock-wrap", { x: -56, y: -22, scale: 0.33, transformOrigin: "120px 108px" });
     gsap.set("#brand-row", { x: 25, y: -125, scale: 0.92 });
 
     const tl = gsap.timeline({ paused: true });
-
-    // 1) 0.30s sabit duruş sonrası TCL fade-out olur, saat merkeze (120,108) uçar
     tl.to("#row-tcl", { opacity: 0, y: 8, duration: 0.4, ease: "power2.in" }, 0.3);
     tl.fromTo("#menu-ver-1", { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.6, duration: 0.18, ease: "power2.in" }, 0.34);
 
@@ -203,9 +334,7 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     tl.to("#brand-row",  { x: 0, y: 0, scale: 1, duration: 0.55, ease: "power3.inOut" }, 0.35);
     tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.6)" }, 0.88);
 
-    // 2) 1.15s sonrası: Çizgili halden 1 tur sarı, 4 tur mavi, 8 tur pembe
-    let tCursor = 1.15;
-    let aTop = 0, aRb = 0, aLb = 0;
+    let tCursor = 1.15, aTop = 0, aRb = 0, aLb = 0;
     for (let c = 0; c < SPIN_CYCLES; c++) {
       aTop += 720; aRb += 360; aLb += 90;
       tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 108", duration: 1.6, ease: "power1.in" }, tCursor);
@@ -233,6 +362,7 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
 </html>
 EOF
 
+# --- PROJE 3: Dual Boot -> TCL Original (1.7s Kısa Video) ---
 cat <<'EOF' > "$TCL_DIR/index.html"
 <!doctype html>
 <html lang="tr">
@@ -302,12 +432,10 @@ cat <<'EOF' > "$TCL_DIR/index.html"
     gsap.set("#tcl-logo-wrap", { x: -45, y: 28, scale: 0.333, transformOrigin: "center center" });
 
     const tl = gsap.timeline({ paused: true });
-
     tl.to("#clock-wrap",     { opacity: 0, y: -28, duration: 0.35, ease: "power2.in" }, 0.3);
     tl.to("#ketra-menu-row", { opacity: 0, y: -6,  duration: 0.35, ease: "power2.in" }, 0.3);
     tl.to("#tcl-label",      { opacity: 0, x: 6,   duration: 0.3,  ease: "power2.in" }, 0.3);
-
-    tl.to("#tcl-logo-wrap", { x: 0, y: 0, scale: 1, duration: 0.7, ease: "power3.inOut" }, 0.35);
+    tl.to("#tcl-logo-wrap",  { x: 0, y: 0, scale: 1, duration: 0.7, ease: "power3.inOut" }, 0.35);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-dualboot-tcl"] = tl;
@@ -334,19 +462,25 @@ node -e '
       }
     }
   }
-' "$KETRA_DIR/index.html" "$TCL_DIR/index.html"
+' "$MORPH_DIR/index.html" "$KETRA_DIR/index.html" "$TCL_DIR/index.html"
 ok "HTML dış kaynak politikası doğrulandı."
 
+"$HF_BIN" lint "$MORPH_DIR"
+"$HF_BIN" check "$MORPH_DIR"
 "$HF_BIN" lint "$KETRA_DIR"
 "$HF_BIN" check "$KETRA_DIR"
 "$HF_BIN" lint "$TCL_DIR"
 "$HF_BIN" check "$TCL_DIR"
-ok "Her iki proje lint ve check kontrolünden geçti."
+ok "Tüm 3 proje lint ve check kontrolünden geçti."
 
-# 6. İki Dual Boot Videosu Render (60fps)
-log "6/6 — KetraWOS 1 ve Kısa TCL Dual Boot videoları render ediliyor..."
+# 6. Tüm 3 Videoyu Render Etme (60fps)
+log "6/6 — Tüm 3 video (240x240, 60fps) render ediliyor..."
+"$HF_BIN" render "$MORPH_DIR" --fps 60 --output "$OUT_DIR/ketrawos-logo-morph-240x240.mp4"
 "$HF_BIN" render "$KETRA_DIR" --fps 60 --output "$OUT_DIR/ketrawos-dualboot-ketra-240x240.mp4"
 "$HF_BIN" render "$TCL_DIR"   --fps 60 --output "$OUT_DIR/ketrawos-dualboot-tcl-240x240.mp4"
 
-log "TAMAMLANDI! İki video başarıyla oluşturuldu:"
-ls -lh "$OUT_DIR/ketrawos-dualboot-ketra-240x240.mp4" "$OUT_DIR/ketrawos-dualboot-tcl-240x240.mp4"
+log "TAMAMLANDI! Tüm 3 video başarıyla oluşturuldu:"
+ls -lh \
+  "$OUT_DIR/ketrawos-logo-morph-240x240.mp4" \
+  "$OUT_DIR/ketrawos-dualboot-ketra-240x240.mp4" \
+  "$OUT_DIR/ketrawos-dualboot-tcl-240x240.mp4"
