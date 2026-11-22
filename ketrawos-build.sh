@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ==============================================================================
-# KetraWOS 1 — Eşit Kalınlıklı Dikdörtgen Saat Dönüşüm Videosu (240x240)
+# KetraWOS 1 — Hızlandırılmış (%30) Kristal <-> Saat Dönüşüm Videosu (240x240)
 # ==============================================================================
 
 WORKDIR="$(pwd)/ketrawos-workspace"
@@ -154,9 +154,6 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
       position: relative;
       width: 240px;
       height: 240px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     #logo-svg {
       position: absolute;
@@ -165,157 +162,173 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
       height: 240px;
       pointer-events: none;
     }
-    #logo-text-wrap {
+    #brand-row {
       position: absolute;
-      inset: 0;
+      top: 201px;
+      left: 0;
+      width: 240px;
+      height: 20px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1px;
-      opacity: 0;
+      gap: 5px;
       pointer-events: none;
     }
-    #logo-text-name {
+    #ketra-word {
+      display: inline-block;
       font-family: "Lexend", sans-serif;
       font-weight: 700;
-      font-size: 7px;
-      line-height: 1.05;
+      font-size: 13px;
+      line-height: 1;
       letter-spacing: -0.01em;
       color: #ffffff;
+      opacity: 0;
     }
-    #logo-text-ver {
+    #ver-badge {
+      display: inline-block;
+      width: 10px;
       font-family: "Lexend", sans-serif;
       font-weight: 700;
-      font-size: 9px;
-      line-height: 1.05;
+      font-size: 13px;
+      line-height: 1;
+      text-align: center;
       color: #ffffff;
+      opacity: 0;
     }
   </style>
 </head>
 <body>
-  <!-- Uzun bekleme loopu için SPIN_LOOPS değerini artırıp data-duration = 8 + SPIN_LOOPS * 2 yapabilirsin -->
+  <!-- Uzun bekleme loopu için SPIN_LOOPS değerini artırıp data-duration = 5.8 + SPIN_LOOPS * 1.2 yapabilirsin -->
   <div
     id="root"
     data-composition-id="ketrawos-logo-morph"
     data-start="0"
-    data-duration="10"
+    data-duration="7"
     data-width="240"
     data-height="240"
   >
-    <section id="morph-clip" class="clip" data-start="0" data-duration="10" data-track-index="1">
+    <section id="morph-clip" class="clip" data-start="0" data-duration="7" data-track-index="1">
       <div id="morph-stage">
         <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
           <!-- Üst Kristal -> Saniye Dikdörtgeni (12 yönü) -->
           <g id="hand-top-group">
-            <path id="top-dark" d="M 95.4,104.3 L 95.4,59.5 L 120.0,34.9 L 144.6,59.5 L 144.6,104.3 Z" fill="#8C0020" />
-            <path id="top-light" d="M 102.1,97.6 L 102.1,62.9 L 120.0,41.6 L 137.9,62.9 L 137.9,97.6 Z" fill="#FF0055" />
+            <path id="top-dark" d="M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z" fill="#8C0020" />
+            <path id="top-light" d="M 104.0,94.0 L 104.0,63.0 L 120.0,44.0 L 136.0,63.0 L 136.0,94.0 Z" fill="#FF0055" />
           </g>
 
           <!-- Sol Alt Kristal -> Akrep Dikdörtgeni (8 yönü) -->
           <g id="hand-lb-group">
-            <path id="lb-dark" d="M 126.5,144.7 L 70.2,177.2 L 36.6,168.2 L 45.6,134.5 L 101.9,102.0 Z" fill="#8A5A00" />
-            <path id="lb-light" d="M 117.3,142.2 L 69.8,169.7 L 42.4,164.8 L 51.8,138.6 L 99.4,111.2 Z" fill="#DD9500" />
+            <path id="lb-dark" d="M 125.8,136.1 L 75.5,165.1 L 45.5,157.0 L 53.5,127.0 L 103.8,98.0 Z" fill="#8A5A00" />
+            <path id="lb-light" d="M 117.6,133.8 L 75.2,158.3 L 50.7,154.0 L 59.1,130.7 L 101.6,106.2 Z" fill="#DD9500" />
           </g>
 
           <!-- Sağ Alt Kristal -> Yelkovan Dikdörtgeni (4 yönü) -->
           <g id="hand-rb-group">
-            <path id="rb-dark" d="M 138.1,102.0 L 194.4,134.5 L 203.4,168.2 L 169.8,177.2 L 113.5,144.7 Z" fill="#008CAA" />
-            <path id="rb-light" d="M 140.6,111.2 L 188.2,138.6 L 197.6,164.8 L 170.2,169.7 L 122.7,142.2 Z" fill="#82E9FF" />
+            <path id="rb-dark" d="M 136.2,98.0 L 186.4,127.0 L 194.5,157.0 L 164.4,165.1 L 114.2,136.1 Z" fill="#008CAA" />
+            <path id="rb-light" d="M 138.4,106.2 L 180.8,130.7 L 189.3,154.0 L 164.8,158.3 L 122.4,133.8 Z" fill="#82E9FF" />
           </g>
 
-          <!-- Merkezi Kırmızı Daire (İncelirken küçülür, loop sonunda büyüyerek başa döner) -->
-          <circle id="center-dot-outer" cx="120.0" cy="120.0" r="38.8" fill="#950000" />
-          <circle id="center-dot-inner" cx="120.0" cy="120.0" r="31.8" fill="#E00000" />
+          <!-- Merkezi Kırmızı Daire (Küçülür: 34.6/28.4 -> 21.5/17.5) -->
+          <circle id="center-dot-outer" cx="120.0" cy="114.0" r="34.6" fill="#950000" />
+          <circle id="center-dot-inner" cx="120.0" cy="114.0" r="28.4" fill="#E00000" />
         </svg>
 
-        <div id="logo-text-wrap">
-          <div id="logo-text-name">KetraWOS</div>
-          <div id="logo-text-ver">1</div>
+        <div id="brand-row">
+          <span id="ketra-word">KetraWOS</span>
+          <span id="ver-badge">1</span>
         </div>
       </div>
     </section>
   </div>
 
   <script>
-    const SPIN_LOOPS = 1;
+    const SPIN_LOOPS = 1; // Her 1 birim = +1.2s yüksek hızlı akış
 
     const SHAPES = {
-      topDarkOrig:  "M 95.4,104.3 L 95.4,59.5 L 120.0,34.9 L 144.6,59.5 L 144.6,104.3 Z",
-      topDarkHand:  "M 116.8,106.0 L 116.8,18.0 L 120.0,18.0 L 123.2,18.0 L 123.2,106.0 Z",
-      topLightOrig: "M 102.1,97.6 L 102.1,62.9 L 120.0,41.6 L 137.9,62.9 L 137.9,97.6 Z",
-      topLightHand: "M 118.2,106.0 L 118.2,20.5 L 120.0,20.5 L 121.8,20.5 L 121.8,106.0 Z",
+      topDarkOrig:  "M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z",
+      topDarkHand:  "M 117.0,104.0 L 117.0,32.0 L 120.0,32.0 L 123.0,32.0 L 123.0,104.0 Z",
+      topLightOrig: "M 104.0,94.0 L 104.0,63.0 L 120.0,44.0 L 136.0,63.0 L 136.0,94.0 Z",
+      topLightHand: "M 118.3,104.0 L 118.3,34.2 L 120.0,34.2 L 121.7,34.2 L 121.7,104.0 Z",
 
-      lbDarkOrig:   "M 126.5,144.7 L 70.2,177.2 L 36.6,168.2 L 45.6,134.5 L 101.9,102.0 Z",
-      lbDarkHand:   "M 109.5,129.8 L 59.2,158.8 L 57.6,156.0 L 56.0,153.2 L 106.3,124.2 Z",
-      lbLightOrig:  "M 117.3,142.2 L 69.8,169.7 L 42.4,164.8 L 51.8,138.6 L 99.4,111.2 Z",
-      lbLightHand:  "M 108.8,128.6 L 60.7,156.3 L 59.8,154.8 L 58.9,153.2 L 107.0,125.4 Z",
+      lbDarkOrig:   "M 125.8,136.1 L 75.5,165.1 L 45.5,157.0 L 53.5,127.0 L 103.8,98.0 Z",
+      lbDarkHand:   "M 112.8,121.6 L 73.0,144.6 L 71.5,142.0 L 70.0,139.4 L 109.8,116.4 Z",
+      lbLightOrig:  "M 117.6,133.8 L 75.2,158.3 L 50.7,154.0 L 59.1,130.7 L 101.6,106.2 Z",
+      lbLightHand:  "M 112.2,120.5 L 74.3,142.4 L 73.4,140.9 L 72.6,139.4 L 110.5,117.5 Z",
 
-      rbDarkOrig:   "M 138.1,102.0 L 194.4,134.5 L 203.4,168.2 L 169.8,177.2 L 113.5,144.7 Z",
-      rbDarkHand:   "M 133.7,124.2 L 201.3,163.2 L 199.7,166.0 L 198.1,168.8 L 130.5,129.8 Z",
-      rbLightOrig:  "M 140.6,111.2 L 188.2,138.6 L 197.6,164.8 L 170.2,169.7 L 122.7,142.2 Z",
-      rbLightHand:  "M 133.0,125.4 L 198.4,163.2 L 197.5,164.8 L 196.6,166.3 L 131.2,128.6 Z"
+      rbDarkOrig:   "M 136.2,98.0 L 186.4,127.0 L 194.5,157.0 L 164.4,165.1 L 114.2,136.1 Z",
+      rbDarkHand:   "M 130.2,116.4 L 183.9,147.4 L 182.4,150.0 L 180.9,152.6 L 127.2,121.6 Z",
+      rbLightOrig:  "M 138.4,106.2 L 180.8,130.7 L 189.3,154.0 L 164.8,158.3 L 122.4,133.8 Z",
+      rbLightHand:  "M 129.5,117.5 L 181.3,147.4 L 180.4,148.9 L 179.6,150.4 L 127.8,120.5 Z"
     };
+
+    // KetraWOS başlangıçta daire merkezinde (120, 114) ve 0.5x (aşağı inince 2x = 1.0 olur)
+    gsap.set("#ketra-word", { x: 7.5, y: -97, scale: 0.5 });
+    gsap.set("#ver-badge", { scale: 0.6 });
 
     const tl = gsap.timeline({ paused: true });
 
-    // 1) 0.00s -> 1.40s: 3 Kristal eşit kalınlıkta dış konturlu ince dikdörtgene dönüşür & merkez daire küçülür
-    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.4, ease: "power2.inOut" }, 0);
-    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.4, ease: "power2.inOut" }, 0);
-    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.4, ease: "power2.inOut" }, 0);
-    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.4, ease: "power2.inOut" }, 0);
-    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.4, ease: "power2.inOut" }, 0);
-    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.4, ease: "power2.inOut" }, 0);
+    // 1) 0.00s -> 0.95s: Kristaller dikdörtgene dönüşür & daire iyice küçülür
+    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 0.95, ease: "power2.inOut" }, 0);
+    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 0.95, ease: "power2.inOut" }, 0);
+    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 0.95, ease: "power2.inOut" }, 0);
+    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 0.95, ease: "power2.inOut" }, 0);
+    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 0.95, ease: "power2.inOut" }, 0);
+    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 0.95, ease: "power2.inOut" }, 0);
 
-    tl.fromTo("#center-dot-outer", { attr: { r: 38.8 } }, { attr: { r: 28.0 }, duration: 1.4, ease: "power2.inOut" }, 0);
-    tl.fromTo("#center-dot-inner", { attr: { r: 31.8 } }, { attr: { r: 23.2 }, duration: 1.4, ease: "power2.inOut" }, 0);
+    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 0.95, ease: "power2.inOut" }, 0);
+    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 0.95, ease: "power2.inOut" }, 0);
 
-    // 1b) 0.15s -> 1.25s: KetraWOS 1 yazısı dönme başlamadan önce %100 görünür olur
-    tl.fromTo("#logo-text-wrap", { opacity: 0 }, { opacity: 1, duration: 1.1, ease: "power2.out" }, 0.15);
+    // 1b) Dairede %75 görünür olduktan sonra saatin aşağısına 2x büyüyerek iner, sonra yanında 1 belirir
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.6, ease: "power2.out" }, 0.08);
+    tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.45, ease: "power3.inOut" }, 0.7);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.23, ease: "back.out(1.6)" }, 1.12);
 
-    // 2) 1.45s -> 3.45s: Saat akışı başlar ve hızlanır
-    tl.to("#hand-top-group", { rotation: 720, svgOrigin: "120 120", duration: 2.0, ease: "power1.in" }, 1.45);
-    tl.to("#hand-rb-group",  { rotation: 360, svgOrigin: "120 120", duration: 2.0, ease: "power1.in" }, 1.45);
-    tl.to("#hand-lb-group",  { rotation: 180, svgOrigin: "120 120", duration: 2.0, ease: "power1.in" }, 1.45);
+    // 2) 1.40s -> 2.60s: Çok daha hızlı saat akışı hızlanması (tepe hız: 1800°/s = 5 tur/sn)
+    tl.to("#hand-top-group", { rotation: 1080, svgOrigin: "120 114", duration: 1.2, ease: "power1.in" }, 1.4);
+    tl.to("#hand-rb-group",  { rotation: 540,  svgOrigin: "120 114", duration: 1.2, ease: "power1.in" }, 1.4);
+    tl.to("#hand-lb-group",  { rotation: 180,  svgOrigin: "120 114", duration: 1.2, ease: "power1.in" }, 1.4);
 
-    // 3) Tam hızda tekrarlanabilir akış (SPIN_LOOPS x 2.0s)
-    let tCursor = 3.45;
-    let aTop = 720;
-    let aRb  = 360;
+    // 3) Tam hızda kesintisiz akış (SPIN_LOOPS x 1.20s)
+    let tCursor = 2.6;
+    let aTop = 1080;
+    let aRb  = 540;
     let aLb  = 180;
 
     for (let k = 0; k < SPIN_LOOPS; k++) {
-      aTop += 1440;
-      aRb  += 720;
+      aTop += 2160;
+      aRb  += 1080;
       aLb  += 360;
-      tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 120", duration: 2.0, ease: "none" }, tCursor);
-      tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 120", duration: 2.0, ease: "none" }, tCursor);
-      tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 120", duration: 2.0, ease: "none" }, tCursor);
-      tCursor += 2.0;
+      tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 1.2, ease: "none" }, tCursor);
+      tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 1.2, ease: "none" }, tCursor);
+      tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 1.2, ease: "none" }, tCursor);
+      tCursor += 1.2;
     }
 
-    // 4) 3.0s boyunca yavaş yavaş yavaşlama ve tam kristal açılarına oturma
-    aTop += 720;
-    aRb  += 360;
+    // 4) 1.80s boyunca gitgide yavaşlama ve tam kristal yerlerine oturma (360° tam katı)
+    aTop += 1080;
+    aRb  += 540;
     aLb  += 180;
-    tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 120", duration: 3.0, ease: "power2.out" }, tCursor);
-    tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 120", duration: 3.0, ease: "power2.out" }, tCursor);
-    tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 120", duration: 3.0, ease: "power2.out" }, tCursor);
-    tCursor += 3.0;
+    tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 1.8, ease: "power2.out" }, tCursor);
+    tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 1.8, ease: "power2.out" }, tCursor);
+    tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 1.8, ease: "power2.out" }, tCursor);
+    tCursor += 1.8;
 
-    // 5) Loop kapanışı: dikdörtgen saat çizgileri tekrar kristale dönüşür & merkez daire eski boyutuna büyür
-    const revStart = tCursor + 0.1;
-    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.3, ease: "power2.inOut" }, revStart);
-    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.3, ease: "power2.inOut" }, revStart);
-    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.3, ease: "power2.inOut" }, revStart);
-    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.3, ease: "power2.inOut" }, revStart);
-    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.3, ease: "power2.inOut" }, revStart);
-    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.3, ease: "power2.inOut" }, revStart);
+    // 5) Tam tersi: 1 kaybolur -> KetraWOS küçülüp daireye döner -> daire büyür & dikdörtgenler kristale döner
+    const revTextStart = tCursor + 0.05;
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.23, ease: "power2.in" }, revTextStart);
+    tl.to("#ketra-word", { opacity: 0.75, x: 7.5, y: -97, scale: 0.5, duration: 0.46, ease: "power3.inOut" }, revTextStart + 0.17);
+    tl.to("#ketra-word", { opacity: 0, duration: 0.55, ease: "power2.in" }, revTextStart + 0.65);
 
-    tl.to("#center-dot-outer", { attr: { r: 38.8 }, duration: 1.3, ease: "power2.inOut" }, revStart);
-    tl.to("#center-dot-inner", { attr: { r: 31.8 }, duration: 1.3, ease: "power2.inOut" }, revStart);
+    const revShapeStart = revTextStart + 0.3;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 0.95, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 0.95, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 0.95, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 0.95, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 0.95, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 0.95, ease: "power2.inOut" }, revShapeStart);
 
-    tl.to("#logo-text-wrap", { opacity: 0, duration: 1.0, ease: "power2.in" }, revStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 0.95, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 0.95, ease: "power2.inOut" }, revShapeStart);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-logo-morph"] = tl;
