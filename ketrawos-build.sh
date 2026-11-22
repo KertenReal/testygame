@@ -133,10 +133,13 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000000; font-family: "Lexend", sans-serif; }
     .clip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     #dualboot-stage { position: relative; width: 240px; height: 240px; }
+    #clock-wrap { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
     #clock-svg { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
     #brand-row { position: absolute; top: 201px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; }
     #ketra-word { display: inline-block; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; letter-spacing: -0.01em; color: #ffffff; }
-    #ver-badge { display: inline-block; width: 10px; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; text-align: center; color: #ffffff; }
+    #ver-slot { position: relative; display: inline-block; width: 10px; height: 13px; }
+    #menu-ver-1 { position: absolute; inset: 0; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; text-align: center; color: #ffffff; }
+    #ver-badge { position: absolute; inset: 0; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; text-align: center; color: #ffffff; opacity: 0; }
     #row-tcl { position: absolute; top: 138px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; pointer-events: none; }
     #tcl-label { width: 82px; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #e5e7eb; white-space: nowrap; }
   </style>
@@ -145,8 +148,9 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
   <div id="root" data-composition-id="ketrawos-dualboot-ketra" data-start="0" data-duration="6.5" data-width="240" data-height="240">
     <section id="dualboot-clip" class="clip" data-start="0" data-duration="6.5" data-track-index="1">
       <div id="dualboot-stage">
-        <svg id="clock-svg" viewBox="0 0 240 240" width="240" height="240">
-          <g id="ketra-clock-group">
+        <!-- HTML sarmalayıcı x/y/scale taşır, SVG sadece (120,108) etrafında döndürür -->
+        <div id="clock-wrap">
+          <svg id="clock-svg" viewBox="0 0 240 240" width="240" height="240">
             <g id="hand-top-group">
               <path id="top-dark" d="M 117.0,98.0 L 117.0,28.0 L 120.0,28.0 L 123.0,28.0 L 123.0,98.0 Z" fill="#8C0020" />
               <path id="top-light" d="M 118.3,98.0 L 118.3,30.2 L 120.0,30.2 L 121.7,30.2 L 121.7,98.0 Z" fill="#FF0055" />
@@ -161,12 +165,15 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
             </g>
             <circle id="center-dot-outer" cx="120.0" cy="108.0" r="21.5" fill="#950000" />
             <circle id="center-dot-inner" cx="120.0" cy="108.0" r="17.5" fill="#E00000" />
-          </g>
-        </svg>
+          </svg>
+        </div>
 
         <div id="brand-row">
           <span id="ketra-word">KetraWOS</span>
-          <span id="ver-badge">1</span>
+          <span id="ver-slot">
+            <span id="menu-ver-1">1</span>
+            <span id="ver-badge">1</span>
+          </span>
         </div>
 
         <div id="row-tcl">
@@ -182,16 +189,21 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
   </div>
   <script>
     const SPIN_CYCLES = 1;
-    gsap.set("#ketra-clock-group", { x: -56, y: -22, scale: 0.33, svgOrigin: "120 108" });
+
+    gsap.set("#clock-wrap", { x: -56, y: -22, scale: 0.33, transformOrigin: "120px 108px" });
     gsap.set("#brand-row", { x: 25, y: -125, scale: 0.92 });
 
     const tl = gsap.timeline({ paused: true });
-    tl.to("#row-tcl", { opacity: 0, y: 8, duration: 0.4, ease: "power2.in" }, 0.3);
-    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.18, ease: "power2.in" }, 0.3);
-    tl.to("#ketra-clock-group", { x: 0, y: 0, scale: 1, svgOrigin: "120 108", duration: 0.6, ease: "power3.inOut" }, 0.35);
-    tl.to("#brand-row", { x: 0, y: 0, scale: 1, duration: 0.55, ease: "power3.inOut" }, 0.35);
-    tl.to("#ver-badge", { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.6)" }, 0.88);
 
+    // 1) 0.30s sabit duruş sonrası TCL fade-out olur, saat merkeze (120,108) uçar
+    tl.to("#row-tcl", { opacity: 0, y: 8, duration: 0.4, ease: "power2.in" }, 0.3);
+    tl.fromTo("#menu-ver-1", { opacity: 1, scale: 1 }, { opacity: 0, scale: 0.6, duration: 0.18, ease: "power2.in" }, 0.34);
+
+    tl.to("#clock-wrap", { x: 0, y: 0, scale: 1, duration: 0.6, ease: "power3.inOut" }, 0.35);
+    tl.to("#brand-row",  { x: 0, y: 0, scale: 1, duration: 0.55, ease: "power3.inOut" }, 0.35);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.6)" }, 0.88);
+
+    // 2) 1.15s sonrası: Çizgili halden 1 tur sarı, 4 tur mavi, 8 tur pembe
     let tCursor = 1.15;
     let aTop = 0, aRb = 0, aLb = 0;
     for (let c = 0; c < SPIN_CYCLES; c++) {
@@ -241,11 +253,13 @@ cat <<'EOF' > "$TCL_DIR/index.html"
     #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000000; font-family: "Lexend", sans-serif; }
     .clip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     #tclboot-stage { position: relative; width: 240px; height: 240px; }
+    #clock-wrap { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
     #clock-svg { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
     #ketra-menu-row { position: absolute; top: 76px; left: 104px; height: 20px; display: flex; align-items: center; gap: 5px; pointer-events: none; }
     #ketra-menu-word { font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #ffffff; }
     #ketra-menu-ver { font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #ffffff; }
-    #tcl-logo-svg { position: absolute; top: 99.5px; left: 54px; width: 132px; height: 41px; pointer-events: none; }
+    #tcl-logo-wrap { position: absolute; top: 99.5px; left: 54px; width: 132px; height: 41px; pointer-events: none; }
+    #tcl-logo-svg { display: block; width: 132px; height: 41px; }
     #tcl-label { position: absolute; top: 138px; left: 105px; width: 82px; height: 20px; display: flex; align-items: center; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #e5e7eb; white-space: nowrap; pointer-events: none; }
   </style>
 </head>
@@ -253,8 +267,8 @@ cat <<'EOF' > "$TCL_DIR/index.html"
   <div id="root" data-composition-id="ketrawos-dualboot-tcl" data-start="0" data-duration="1.7" data-width="240" data-height="240">
     <section id="tclboot-clip" class="clip" data-start="0" data-duration="1.7" data-track-index="1">
       <div id="tclboot-stage">
-        <svg id="clock-svg" viewBox="0 0 240 240" width="240" height="240">
-          <g id="ketra-clock-group">
+        <div id="clock-wrap">
+          <svg id="clock-svg" viewBox="0 0 240 240" width="240" height="240">
             <path id="top-dark" d="M 117.0,98.0 L 117.0,28.0 L 120.0,28.0 L 123.0,28.0 L 123.0,98.0 Z" fill="#8C0020" />
             <path id="top-light" d="M 118.3,98.0 L 118.3,30.2 L 120.0,30.2 L 121.7,30.2 L 121.7,98.0 Z" fill="#FF0055" />
             <path id="lb-dark" d="M 112.8,115.6 L 74.7,137.6 L 73.2,135.0 L 71.7,132.4 L 109.8,110.4 Z" fill="#8A5A00" />
@@ -263,37 +277,37 @@ cat <<'EOF' > "$TCL_DIR/index.html"
             <path id="rb-light" d="M 129.5,111.5 L 179.6,140.4 L 178.7,141.9 L 177.9,143.4 L 127.8,114.5 Z" fill="#82E9FF" />
             <circle id="center-dot-outer" cx="120.0" cy="108.0" r="21.5" fill="#950000" />
             <circle id="center-dot-inner" cx="120.0" cy="108.0" r="17.5" fill="#E00000" />
-          </g>
-        </svg>
+          </svg>
+        </div>
 
         <div id="ketra-menu-row">
           <span id="ketra-menu-word">KetraWOS</span>
           <span id="ketra-menu-ver">1</span>
         </div>
 
-        <svg id="tcl-logo-svg" width="132" height="41" viewBox="0 0 235 73">
-          <path id="tcl-t" fill="#FFFFFF" d="M 0.0,3.0 L 0.0,22.0 L 26.0,22.0 L 27.0,23.0 L 27.0,69.0 L 50.0,69.0 L 50.0,23.0 L 51.0,22.0 L 76.0,22.0 L 76.0,3.0 Z" />
-          <path id="tcl-c" fill="#FFFFFF" d="M 97.0,6.0 L 89.0,14.0 L 89.0,15.0 L 87.0,17.0 L 87.0,18.0 L 86.0,19.0 L 86.0,21.0 L 84.0,24.0 L 84.0,27.0 L 83.0,28.0 L 83.0,44.0 L 84.0,45.0 L 84.0,48.0 L 85.0,49.0 L 85.0,51.0 L 86.0,52.0 L 87.0,55.0 L 89.0,57.0 L 89.0,58.0 L 96.0,65.0 L 99.0,66.0 L 101.0,68.0 L 103.0,68.0 L 106.0,70.0 L 109.0,70.0 L 110.0,71.0 L 114.0,71.0 L 115.0,72.0 L 131.0,72.0 L 132.0,71.0 L 136.0,71.0 L 137.0,70.0 L 140.0,70.0 L 141.0,69.0 L 142.0,69.0 L 143.0,68.0 L 144.0,68.0 L 145.0,67.0 L 148.0,66.0 L 156.0,58.0 L 156.0,57.0 L 157.0,56.0 L 157.0,55.0 L 160.0,50.0 L 160.0,45.0 L 161.0,44.0 L 140.0,44.0 L 140.0,46.0 L 139.0,47.0 L 138.0,50.0 L 134.0,54.0 L 133.0,54.0 L 132.0,55.0 L 130.0,55.0 L 129.0,56.0 L 118.0,56.0 L 117.0,55.0 L 115.0,55.0 L 114.0,54.0 L 113.0,54.0 L 107.0,48.0 L 107.0,47.0 L 104.0,42.0 L 104.0,30.0 L 105.0,29.0 L 105.0,27.0 L 106.0,26.0 L 106.0,25.0 L 110.0,20.0 L 111.0,20.0 L 114.0,17.0 L 116.0,17.0 L 117.0,16.0 L 120.0,16.0 L 121.0,15.0 L 126.0,15.0 L 127.0,16.0 L 130.0,16.0 L 131.0,17.0 L 133.0,17.0 L 138.0,22.0 L 138.0,23.0 L 140.0,26.0 L 140.0,28.0 L 161.0,28.0 L 160.0,27.0 L 160.0,22.0 L 159.0,21.0 L 159.0,19.0 L 158.0,18.0 L 157.0,15.0 L 154.0,12.0 L 154.0,11.0 L 151.0,8.0 L 150.0,8.0 L 145.0,4.0 L 144.0,4.0 L 143.0,3.0 L 141.0,3.0 L 140.0,2.0 L 138.0,2.0 L 137.0,1.0 L 134.0,1.0 L 133.0,0.0 L 113.0,0.0 L 112.0,1.0 L 109.0,1.0 L 108.0,2.0 L 105.0,2.0 L 104.0,3.0 L 103.0,3.0 L 102.0,4.0 L 101.0,4.0 L 100.0,5.0 Z" />
-          <path id="tcl-l" fill="#FFFFFF" d="M 174.0,3.0 L 174.0,69.0 L 234.0,69.0 L 234.0,52.0 L 197.0,52.0 L 196.0,51.0 L 196.0,3.0 Z" />
-        </svg>
+        <div id="tcl-logo-wrap">
+          <svg id="tcl-logo-svg" width="132" height="41" viewBox="0 0 235 73">
+            <path id="tcl-t" fill="#FFFFFF" d="M 0.0,3.0 L 0.0,22.0 L 26.0,22.0 L 27.0,23.0 L 27.0,69.0 L 50.0,69.0 L 50.0,23.0 L 51.0,22.0 L 76.0,22.0 L 76.0,3.0 Z" />
+            <path id="tcl-c" fill="#FFFFFF" d="M 97.0,6.0 L 89.0,14.0 L 89.0,15.0 L 87.0,17.0 L 87.0,18.0 L 86.0,19.0 L 86.0,21.0 L 84.0,24.0 L 84.0,27.0 L 83.0,28.0 L 83.0,44.0 L 84.0,45.0 L 84.0,48.0 L 85.0,49.0 L 85.0,51.0 L 86.0,52.0 L 87.0,55.0 L 89.0,57.0 L 89.0,58.0 L 96.0,65.0 L 99.0,66.0 L 101.0,68.0 L 103.0,68.0 L 106.0,70.0 L 109.0,70.0 L 110.0,71.0 L 114.0,71.0 L 115.0,72.0 L 131.0,72.0 L 132.0,71.0 L 136.0,71.0 L 137.0,70.0 L 140.0,70.0 L 141.0,69.0 L 142.0,69.0 L 143.0,68.0 L 144.0,68.0 L 145.0,67.0 L 148.0,66.0 L 156.0,58.0 L 156.0,57.0 L 157.0,56.0 L 157.0,55.0 L 160.0,50.0 L 160.0,45.0 L 161.0,44.0 L 140.0,44.0 L 140.0,46.0 L 139.0,47.0 L 138.0,50.0 L 134.0,54.0 L 133.0,54.0 L 132.0,55.0 L 130.0,55.0 L 129.0,56.0 L 118.0,56.0 L 117.0,55.0 L 115.0,55.0 L 114.0,54.0 L 113.0,54.0 L 107.0,48.0 L 107.0,47.0 L 104.0,42.0 L 104.0,30.0 L 105.0,29.0 L 105.0,27.0 L 106.0,26.0 L 106.0,25.0 L 110.0,20.0 L 111.0,20.0 L 114.0,17.0 L 116.0,17.0 L 117.0,16.0 L 120.0,16.0 L 121.0,15.0 L 126.0,15.0 L 127.0,16.0 L 130.0,16.0 L 131.0,17.0 L 133.0,17.0 L 138.0,22.0 L 138.0,23.0 L 140.0,26.0 L 140.0,28.0 L 161.0,28.0 L 160.0,27.0 L 160.0,22.0 L 159.0,21.0 L 159.0,19.0 L 158.0,18.0 L 157.0,15.0 L 154.0,12.0 L 154.0,11.0 L 151.0,8.0 L 150.0,8.0 L 145.0,4.0 L 144.0,4.0 L 143.0,3.0 L 141.0,3.0 L 140.0,2.0 L 138.0,2.0 L 137.0,1.0 L 134.0,1.0 L 133.0,0.0 L 113.0,0.0 L 112.0,1.0 L 109.0,1.0 L 108.0,2.0 L 105.0,2.0 L 104.0,3.0 L 103.0,3.0 L 102.0,4.0 L 101.0,4.0 L 100.0,5.0 Z" />
+            <path id="tcl-l" fill="#FFFFFF" d="M 174.0,3.0 L 174.0,69.0 L 234.0,69.0 L 234.0,52.0 L 197.0,52.0 L 196.0,51.0 L 196.0,3.0 Z" />
+          </svg>
+        </div>
 
         <span id="tcl-label">TCL Original</span>
       </div>
     </section>
   </div>
   <script>
-    gsap.set("#ketra-clock-group", { x: -56, y: -22, scale: 0.33, svgOrigin: "120 108" });
-    gsap.set("#tcl-logo-svg", { x: -45, y: 28, scale: 0.333 });
+    gsap.set("#clock-wrap", { x: -56, y: -22, scale: 0.33, transformOrigin: "120px 108px" });
+    gsap.set("#tcl-logo-wrap", { x: -45, y: 28, scale: 0.333, transformOrigin: "center center" });
 
     const tl = gsap.timeline({ paused: true });
 
-    // 0.00s -> 0.30s sabit durur; 0.30s sonrası KetraWOS 1 ve "TCL Original" yazısı kaybolur
-    tl.to("#ketra-clock-group", { opacity: 0, y: -28, duration: 0.35, ease: "power2.in" }, 0.3);
-    tl.to("#ketra-menu-row",    { opacity: 0, y: -6,  duration: 0.35, ease: "power2.in" }, 0.3);
-    tl.to("#tcl-label",         { opacity: 0, x: 6,   duration: 0.3,  ease: "power2.in" }, 0.3);
+    tl.to("#clock-wrap",     { opacity: 0, y: -28, duration: 0.35, ease: "power2.in" }, 0.3);
+    tl.to("#ketra-menu-row", { opacity: 0, y: -6,  duration: 0.35, ease: "power2.in" }, 0.3);
+    tl.to("#tcl-label",      { opacity: 0, x: 6,   duration: 0.3,  ease: "power2.in" }, 0.3);
 
-    // Beyaz TCL logosu ekran ortasına (120, 120) gelip büyür ve kısa sürede kesilir (1.7s)
-    tl.to("#tcl-logo-svg", { x: 0, y: 0, scale: 1, duration: 0.7, ease: "power3.inOut" }, 0.35);
+    tl.to("#tcl-logo-wrap", { x: 0, y: 0, scale: 1, duration: 0.7, ease: "power3.inOut" }, 0.35);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-dualboot-tcl"] = tl;
