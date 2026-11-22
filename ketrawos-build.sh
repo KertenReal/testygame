@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ==============================================================================
-# KetraWOS 1 — Kristal <-> Saat Dönüşüm Videosu (10s Loop, 240x240)
+# KetraWOS 1 — Simetrik 10s (60fps) Kristal <-> Saat Dönüşüm Videosu (240x240)
 # ==============================================================================
 
 WORKDIR="$(pwd)/ketrawos-workspace"
@@ -109,7 +109,7 @@ node -e '
 ok "GSAP ve Lexend fontu güvenle doğrulandı."
 
 # 4. Logo Dönüşüm Kompozisyonunu Oluşturma (10 sn)
-log "4/6 — KetraWOS Logo Dönüşüm projesi (10s) oluşturuluyor..."
+log "4/6 — KetraWOS Logo Dönüşüm projesi (10s, 60fps) oluşturuluyor..."
 
 cat <<'EOF' > "$MORPH_DIR/index.html"
 <!doctype html>
@@ -198,7 +198,7 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
   </style>
 </head>
 <body>
-  <!-- Uzun bekleme loopu için SPIN_LOOPS değerini artırıp data-duration = 7 + SPIN_LOOPS * 1.5 yapabilirsin -->
+  <!-- Uzun bekleme loopu için SPIN_LOOPS değerini artırıp data-duration = 8 + SPIN_LOOPS * 2 yapabilirsin -->
   <div
     id="root"
     data-composition-id="ketrawos-logo-morph"
@@ -242,7 +242,7 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
   </div>
 
   <script>
-    const SPIN_LOOPS = 2; // 2 tur x 1.5s = 3.0s tam hızlı akış -> toplam 10.0s
+    const SPIN_LOOPS = 1; // Tam hızda 2.00s tur (uzatmak için 2, 3, 5... yap)
 
     const SHAPES = {
       topDarkOrig:  "M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z",
@@ -266,68 +266,67 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
 
     const tl = gsap.timeline({ paused: true });
 
-    // 1) 0.00s -> 1.35s: Kristaller eşit kalınlıkta dikdörtgene dönüşür & daire küçülür
-    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.35, ease: "power2.inOut" }, 0);
-    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.35, ease: "power2.inOut" }, 0);
-    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.35, ease: "power2.inOut" }, 0);
-    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.35, ease: "power2.inOut" }, 0);
-    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.35, ease: "power2.inOut" }, 0);
-    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.35, ease: "power2.inOut" }, 0);
+    // 1) 0.00s -> 1.60s: 3 kristal incelip dikdörtgene dönüşür, kırmızı daire küçülür
+    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.6, ease: "power2.inOut" }, 0);
 
-    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.35, ease: "power2.inOut" }, 0);
-    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.35, ease: "power2.inOut" }, 0);
+    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.6, ease: "power2.inOut" }, 0);
+    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.6, ease: "power2.inOut" }, 0);
 
-    // 1b) Dairede %75 görünür olduktan sonra saatin aşağısına 2x büyüyerek iner, sonra yanında 1 belirir
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.75, ease: "power2.out" }, 0.1);
-    tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.6, ease: "power3.inOut" }, 0.88);
-    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 1.45);
+    // 1b) 0.10s -> 2.00s: KetraWOS dairede %75 görünür -> aşağıya 2x büyüyerek iner -> yanında 1 belirir
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.9, ease: "power2.out" }, 0.1);
+    tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.66, ease: "power3.inOut" }, 1.02);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 1.68);
 
-    // 2) 1.80s -> 3.30s: Yüksek hızlı saat akışı hızlanması (tepe hız: 1920°/s = 5.33 tur/sn)
-    tl.to("#hand-top-group", { rotation: 1440, svgOrigin: "120 114", duration: 1.5, ease: "power1.in" }, 1.8);
-    tl.to("#hand-rb-group",  { rotation: 720,  svgOrigin: "120 114", duration: 1.5, ease: "power1.in" }, 1.8);
-    tl.to("#hand-lb-group",  { rotation: 180,  svgOrigin: "120 114", duration: 1.5, ease: "power1.in" }, 1.8);
+    // 2) 2.00s -> 4.00s: Hızlanma (Saniye -> 5 tur/sn, Yelkovan -> 3 tur/sn, Akrep -> 0.5 tur/sn)
+    tl.to("#hand-top-group", { rotation: 1800, svgOrigin: "120 114", duration: 2.0, ease: "power1.in" }, 2.0);
+    tl.to("#hand-rb-group",  { rotation: 1080, svgOrigin: "120 114", duration: 2.0, ease: "power1.in" }, 2.0);
+    tl.to("#hand-lb-group",  { rotation: 180,  svgOrigin: "120 114", duration: 2.0, ease: "power1.in" }, 2.0);
 
-    // 3) Tam hızda kesintisiz akış (SPIN_LOOPS x 1.50s)
-    let tCursor = 3.3;
-    let aTop = 1440;
-    let aRb  = 720;
+    // 3) 4.00s -> 6.00s: Tam hızda kesintisiz dönüş (SPIN_LOOPS x 2.00s)
+    let tCursor = 4.0;
+    let aTop = 1800;
+    let aRb  = 1080;
     let aLb  = 180;
 
     for (let k = 0; k < SPIN_LOOPS; k++) {
-      aTop += 2880;
-      aRb  += 1440;
+      aTop += 3600;
+      aRb  += 2160;
       aLb  += 360;
-      tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 1.5, ease: "none" }, tCursor);
-      tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 1.5, ease: "none" }, tCursor);
-      tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 1.5, ease: "none" }, tCursor);
-      tCursor += 1.5;
+      tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 2.0, ease: "none" }, tCursor);
+      tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 2.0, ease: "none" }, tCursor);
+      tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 2.0, ease: "none" }, tCursor);
+      tCursor += 2.0;
     }
 
-    // 4) 2.25s boyunca gitgide yavaşlama ve tam kristal yerlerine oturma (360° tam katı)
-    aTop += 1440;
-    aRb  += 720;
+    // 4) 6.00s -> 8.00s: Yavaşlama ve tam 0° eski açılarına oturma
+    aTop += 1800;
+    aRb  += 1080;
     aLb  += 180;
-    tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 2.25, ease: "power2.out" }, tCursor);
-    tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 2.25, ease: "power2.out" }, tCursor);
-    tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 2.25, ease: "power2.out" }, tCursor);
-    tCursor += 2.25;
+    tl.to("#hand-top-group", { rotation: aTop, svgOrigin: "120 114", duration: 2.0, ease: "power1.out" }, tCursor);
+    tl.to("#hand-rb-group",  { rotation: aRb,  svgOrigin: "120 114", duration: 2.0, ease: "power1.out" }, tCursor);
+    tl.to("#hand-lb-group",  { rotation: aLb,  svgOrigin: "120 114", duration: 2.0, ease: "power1.out" }, tCursor);
+    tCursor += 2.0;
 
-    // 5) 8.60s -> 9.95s: Tam tersi — 1 kaybolur -> KetraWOS küçülüp daireye döner -> kristaller ve daire eski haline büyür
-    const revTextStart = tCursor + 0.05;
-    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.25, ease: "power2.in" }, revTextStart);
-    tl.to("#ketra-word", { opacity: 0.75, x: 7.5, y: -97, scale: 0.5, duration: 0.55, ease: "power3.inOut" }, revTextStart + 0.2);
-    tl.to("#ketra-word", { opacity: 0, duration: 0.54, ease: "power2.in" }, revTextStart + 0.78);
+    // 5) 8.00s -> 10.00s: 0.00s - 2.00s bölümünün tam tersi (birebir simetrik loop kapanışı)
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.3, ease: "power2.in" }, tCursor + 0.02);
+    tl.to("#ketra-word", { opacity: 0.75, x: 7.5, y: -97, scale: 0.5, duration: 0.66, ease: "power3.inOut" }, tCursor + 0.32);
+    tl.to("#ketra-word", { opacity: 0, duration: 0.9, ease: "power2.in" }, tCursor + 1.0);
 
-    const revShapeStart = revTextStart + 0.3;
-    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.05, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.05, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.05, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.05, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.05, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.05, ease: "power2.inOut" }, revShapeStart);
+    const revShapeStart = tCursor + 0.4;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
 
-    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.05, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.05, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-logo-morph"] = tl;
@@ -359,9 +358,9 @@ ok "HTML dış kaynak politikası doğrulandı."
 "$HF_BIN" check "$MORPH_DIR"
 ok "Lint ve browser/kontrast kontrolü geçti."
 
-# 6. 240x240 MP4 Render
-log "6/6 — KetraWOS Logo Dönüşüm videosu (10s) render ediliyor..."
-"$HF_BIN" render "$MORPH_DIR" --fps 30 --output "$OUT_DIR/ketrawos-logo-morph-240x240.mp4"
+# 6. 240x240 60fps MP4 Render
+log "6/6 — KetraWOS Logo Dönüşüm videosu (10s, 60fps) render ediliyor..."
+"$HF_BIN" render "$MORPH_DIR" --fps 60 --output "$OUT_DIR/ketrawos-logo-morph-240x240.mp4"
 
 log "TAMAMLANDI! Video başarıyla oluşturuldu:"
 ls -lh "$OUT_DIR/ketrawos-logo-morph-240x240.mp4"
