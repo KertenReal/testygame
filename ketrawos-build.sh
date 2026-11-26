@@ -4,8 +4,8 @@ set -euo pipefail
 # ==============================================================================
 # KetraWOS 1 — Tüm 3 Videoyu Üreten Birleşik HyperFrames Betiği (240x240, 60fps)
 # Çıktılar:
-#   1) ketrawos-logo-morph-240x240.mp4     ( 6.00s — Kristal <-> Saat Döngüsü)
-#   2) ketrawos-dualboot-ketra-240x240.mp4 ( 6.85s — Dual Boot + Kristal -> 1. Animasyon)
+#   1) ketrawos-logo-morph-240x240.mp4     ( 7.50s — Kristal <-> Saat Döngüsü)
+#   2) ketrawos-dualboot-ketra-240x240.mp4 ( 8.35s — Dual Boot + Kristal -> 1. Animasyon)
 #   3) ketrawos-dualboot-tcl-240x240.mp4   ( 1.70s — Dual Boot: Kısa TCL)
 # ==============================================================================
 
@@ -118,14 +118,14 @@ ok "GSAP ve Lexend fontu güvenle doğrulandı."
 # 4. Tüm 3 Kompozisyon Dosyasını Oluşturma
 log "4/6 — 3 video projesi oluşturuluyor..."
 
-# --- PROJE 1: Logo Dönüşüm Döngüsü (6.0s) ---
+# --- PROJE 1: Logo Dönüşüm Döngüsü (7.5s) ---
 cat <<'EOF' > "$MORPH_DIR/index.html"
 <!doctype html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=240, height=240" />
-  <title>KetraWOS 1 — Logo Morph Loop 6s (240x240)</title>
+  <title>KetraWOS 1 — Logo Morph Loop 7.5s (240x240)</title>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
     @font-face {
@@ -139,16 +139,21 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
     #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000000; font-family: "Lexend", sans-serif; }
     .clip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     #morph-stage { position: relative; width: 240px; height: 240px; }
-    #logo-svg { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
-    #brand-row { position: absolute; top: 201px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; }
+    #brand-row { position: absolute; top: 201px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; z-index: 1; }
+    #logo-svg { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; z-index: 2; }
     #ketra-word { display: inline-block; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; letter-spacing: -0.01em; color: #ffffff; opacity: 0; }
     #ver-badge { display: inline-block; width: 10px; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; text-align: center; color: #ffffff; opacity: 0; }
   </style>
 </head>
 <body>
-  <div id="root" data-composition-id="ketrawos-logo-morph" data-start="0" data-duration="6" data-width="240" data-height="240">
-    <section id="morph-clip" class="clip" data-start="0" data-duration="6" data-track-index="1">
+  <div id="root" data-composition-id="ketrawos-logo-morph" data-start="0" data-duration="7.5" data-width="240" data-height="240">
+    <section id="morph-clip" class="clip" data-start="0" data-duration="7.5" data-track-index="1">
       <div id="morph-stage">
+        <div id="brand-row">
+          <span id="ketra-word">KetraWOS</span>
+          <span id="ver-badge">1</span>
+        </div>
+
         <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
           <g id="hand-top-group">
             <path id="top-dark" d="M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z" fill="#8C0020" />
@@ -165,11 +170,6 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
           <circle id="center-dot-outer" cx="120.0" cy="114.0" r="34.6" fill="#950000" />
           <circle id="center-dot-inner" cx="120.0" cy="114.0" r="28.4" fill="#E00000" />
         </svg>
-
-        <div id="brand-row">
-          <span id="ketra-word">KetraWOS</span>
-          <span id="ver-badge">1</span>
-        </div>
       </div>
     </section>
   </div>
@@ -194,7 +194,7 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
 
     const tl = gsap.timeline({ paused: true });
 
-    // 0.0s -> 1.5s: Kristal -> Saat ibreleri dönüşümü (tatlı sine.inOut geçiş)
+    // 0.0s -> 1.5s: Kristal -> Saat ibreleri dönüşümü
     tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.5, ease: "sine.inOut" }, 0);
     tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.5, ease: "sine.inOut" }, 0);
     tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.5, ease: "sine.inOut" }, 0);
@@ -204,45 +204,47 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
     tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.5, ease: "sine.inOut" }, 0);
     tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.5, ease: "sine.inOut" }, 0);
 
-    // Yazı giriş/çıkışında konum/ölçek ile opaklık ayrı tutularak sıfır çakışmayla akıcı iç içe geçiş
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.57, ease: "sine.out" },   0.08);
-    tl.to("#ketra-word", { opacity: 1,    duration: 0.60, ease: "sine.inOut" }, 0.65);
-    tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 0.70, ease: "sine.inOut" }, 0.55);
-    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.40, ease: "back.out(1.3)" }, 1.08);
+    // 0.40s -> 1.50s: KetraWOS yazısı yavaşça aşağı iner; kırmızı dairenin dışına çıktığı 0.78s'de görünmeye başlar,
+    // konumuna oturduğu 1.50s anında %100 görünür olur
+    tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 1.10, ease: "sine.inOut" }, 0.40);
+    tl.to("#ketra-word", { opacity: 1, duration: 0.72, ease: "sine.out" }, 0.78);
 
-    // 0.4s -> 5.2s: Morph'un son 1.10s'inde (0.4s - 1.5s) yumuşak başlangıç, C1-sürekli sine eğrisi
-    // Uzunluğa göre: Saniye (82px, 4 tur) > Yelkovan (72px, 2 tur) > Akrep (56px, 1 tur)
-    const T1 = 1.5, T2 = 1.6, T3 = 1.7;
-    const K = Math.PI / 2;
-    const DENOM = T1 / K + T2 + T3 / K;
+    // 1.50s -> 1.72s: Kristaller tam saat çizgilerine dönüştüğü anda "1" doğrudan aşağıdaki yerinde kısa sürede çıkar
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.22, ease: "back.out(1.5)" }, 1.50);
+
+    // 0.4s -> 6.6s: Morph'un son 1.10s'inde (0.4s - 1.5s) yumuşak başlangıç,
+    // ardından 2.70s uzunlukta kübik power2.out ile uzun ve ipeksi yavaşlama (C1-sürekli)
+    const T1 = 1.5, T2 = 2.0, T3 = 2.7;
+    const K_IN = Math.PI / 2;
+    const K_OUT = 3.0;
+    const DENOM = T1 / K_IN + T2 + T3 / K_OUT;
     const HANDS = [
       { id: "#hand-top-group", total: 1440 }, // Saniye (4 tur)
       { id: "#hand-rb-group",  total:  720 }, // Yelkovan (2 tur)
       { id: "#hand-lb-group",  total:  360 }  // Akrep (1 tur)
     ];
     for (const h of HANDS) {
-      const a1 = h.total * (T1 / K) / DENOM;
+      const a1 = h.total * (T1 / K_IN) / DENOM;
       const a2 = a1 + h.total * T2 / DENOM;
-      tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },  0.4);
-      tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },     1.9);
-      tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "sine.out" }, 3.5);
+      tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },    0.4);
+      tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },       1.9);
+      tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "power2.out" }, 3.9);
     }
 
-    // 4.30s -> 6.00s: Yazı kapanır ve son yavaşlama süzülürken ibreler kristale geri açılır
-    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.40, ease: "sine.inOut" }, 4.30);
-    tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 0.73, ease: "sine.inOut" }, 4.52);
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.63, ease: "sine.inOut" }, 4.52);
-    tl.to("#ketra-word", { opacity: 0,    duration: 0.70, ease: "sine.in" },    5.15);
+    // 5.60s -> 7.50s: Önce "1" hızlıca söner, ardından KetraWOS kırmızı daireye girmeden sönerek geri çekilir
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.22, ease: "sine.inOut" }, 5.60);
+    tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 1.10, ease: "sine.inOut" }, 5.80);
+    tl.to("#ketra-word", { opacity: 0, duration: 0.68, ease: "sine.in" }, 5.80);
 
-    const revShapeStart = 4.5;
-    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    const revShapeStart = 5.8;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.7, ease: "sine.inOut" }, revShapeStart);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-logo-morph"] = tl;
@@ -251,7 +253,7 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
 </html>
 EOF
 
-# --- PROJE 2: Dual Boot -> Kristal Logo Gelişi + 1. Animasyonun Aynısı (6.85s) ---
+# --- PROJE 2: Dual Boot -> Kristal Logo Gelişi + 1. Animasyonun Aynısı (8.35s) ---
 cat <<'EOF' > "$KETRA_DIR/index.html"
 <!doctype html>
 <html lang="tr">
@@ -272,22 +274,27 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000000; font-family: "Lexend", sans-serif; }
     .clip { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     #dualboot-stage { position: relative; width: 240px; height: 240px; }
-    #logo-wrap { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
+    #brand-row { position: absolute; top: 201px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; z-index: 1; }
+    #logo-wrap { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; z-index: 2; }
     #logo-svg { position: absolute; inset: 0; width: 240px; height: 240px; pointer-events: none; }
-    #ketra-menu-row { position: absolute; top: 76px; left: 104px; height: 20px; display: flex; align-items: center; gap: 5px; pointer-events: none; }
+    #ketra-menu-row { position: absolute; top: 76px; left: 104px; height: 20px; display: flex; align-items: center; gap: 5px; pointer-events: none; z-index: 3; }
     #ketra-menu-word { font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #ffffff; }
     #ketra-menu-ver { font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #ffffff; }
-    #row-tcl { position: absolute; top: 138px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; pointer-events: none; }
+    #row-tcl { position: absolute; top: 138px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; pointer-events: none; z-index: 3; }
     #tcl-label { width: 82px; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 12px; line-height: 1; color: #e5e7eb; white-space: nowrap; }
-    #brand-row { position: absolute; top: 201px; left: 0; width: 240px; height: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; pointer-events: none; }
     #ketra-word { display: inline-block; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; letter-spacing: -0.01em; color: #ffffff; opacity: 0; }
     #ver-badge { display: inline-block; width: 10px; font-family: "Lexend", sans-serif; font-weight: 700; font-size: 13px; line-height: 1; text-align: center; color: #ffffff; opacity: 0; }
   </style>
 </head>
 <body>
-  <div id="root" data-composition-id="ketrawos-dualboot-ketra" data-start="0" data-duration="6.85" data-width="240" data-height="240">
-    <section id="dualboot-clip" class="clip" data-start="0" data-duration="6.85" data-track-index="1">
+  <div id="root" data-composition-id="ketrawos-dualboot-ketra" data-start="0" data-duration="8.35" data-width="240" data-height="240">
+    <section id="dualboot-clip" class="clip" data-start="0" data-duration="8.35" data-track-index="1">
       <div id="dualboot-stage">
+        <div id="brand-row">
+          <span id="ketra-word">KetraWOS</span>
+          <span id="ver-badge">1</span>
+        </div>
+
         <div id="logo-wrap">
           <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
             <g id="hand-top-group">
@@ -319,11 +326,6 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
             <path id="tcl-l" fill="#FFFFFF" d="M 174.0,3.0 L 174.0,69.0 L 234.0,69.0 L 234.0,52.0 L 197.0,52.0 L 196.0,51.0 L 196.0,3.0 Z" />
           </svg>
           <span id="tcl-label">TCL Original</span>
-        </div>
-
-        <div id="brand-row">
-          <span id="ketra-word">KetraWOS</span>
-          <span id="ver-badge">1</span>
         </div>
       </div>
     </section>
@@ -368,41 +370,40 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.5, ease: "sine.inOut" }, T + 0);
     tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.5, ease: "sine.inOut" }, T + 0);
 
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.57, ease: "sine.out" },   T + 0.08);
-    tl.to("#ketra-word", { opacity: 1,    duration: 0.60, ease: "sine.inOut" }, T + 0.65);
-    tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 0.70, ease: "sine.inOut" }, T + 0.55);
-    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.40, ease: "back.out(1.3)" }, T + 1.08);
+    tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 1.10, ease: "sine.inOut" }, T + 0.40);
+    tl.to("#ketra-word", { opacity: 1, duration: 0.72, ease: "sine.out" }, T + 0.78);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.22, ease: "back.out(1.5)" }, T + 1.50);
 
-    const T1 = 1.5, T2 = 1.6, T3 = 1.7;
-    const K = Math.PI / 2;
-    const DENOM = T1 / K + T2 + T3 / K;
+    const T1 = 1.5, T2 = 2.0, T3 = 2.7;
+    const K_IN = Math.PI / 2;
+    const K_OUT = 3.0;
+    const DENOM = T1 / K_IN + T2 + T3 / K_OUT;
     const HANDS = [
       { id: "#hand-top-group", total: 1440 }, // Saniye (4 tur)
       { id: "#hand-rb-group",  total:  720 }, // Yelkovan (2 tur)
       { id: "#hand-lb-group",  total:  360 }  // Akrep (1 tur)
     ];
     for (const h of HANDS) {
-      const a1 = h.total * (T1 / K) / DENOM;
+      const a1 = h.total * (T1 / K_IN) / DENOM;
       const a2 = a1 + h.total * T2 / DENOM;
-      tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },  T + 0.4);
-      tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },     T + 1.9);
-      tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "sine.out" }, T + 3.5);
+      tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },    T + 0.4);
+      tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },       T + 1.9);
+      tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "power2.out" }, T + 3.9);
     }
 
-    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.40, ease: "sine.inOut" }, T + 4.30);
-    tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 0.73, ease: "sine.inOut" }, T + 4.52);
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.63, ease: "sine.inOut" }, T + 4.52);
-    tl.to("#ketra-word", { opacity: 0,    duration: 0.70, ease: "sine.in" },    T + 5.15);
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.22, ease: "sine.inOut" }, T + 5.60);
+    tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 1.10, ease: "sine.inOut" }, T + 5.80);
+    tl.to("#ketra-word", { opacity: 0, duration: 0.68, ease: "sine.in" }, T + 5.80);
 
-    const revShapeStart = T + 4.5;
-    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
-    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    const revShapeStart = T + 5.8;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.7, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.7, ease: "sine.inOut" }, revShapeStart);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-dualboot-ketra"] = tl;
