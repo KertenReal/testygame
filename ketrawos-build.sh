@@ -155,15 +155,35 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
         </div>
 
         <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
+          <defs>
+            <linearGradient id="trail-grad-top" gradientUnits="userSpaceOnUse" x1="120.00" y1="35.50" x2="58.14" y2="65.67">
+              <stop offset="0%" stop-color="#FF0055" stop-opacity="1" />
+              <stop offset="55%" stop-color="#FF0055" stop-opacity="0.32" />
+              <stop offset="100%" stop-color="#FF0055" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="trail-grad-rb" gradientUnits="userSpaceOnUse" x1="179.32" y1="148.25" x2="188.12" y2="106.84">
+              <stop offset="0%" stop-color="#82E9FF" stop-opacity="1" />
+              <stop offset="55%" stop-color="#82E9FF" stop-opacity="0.32" />
+              <stop offset="100%" stop-color="#82E9FF" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="trail-grad-lb" gradientUnits="userSpaceOnUse" x1="74.53" y1="140.25" x2="89.14" y2="156.47">
+              <stop offset="0%" stop-color="#DD9500" stop-opacity="1" />
+              <stop offset="55%" stop-color="#DD9500" stop-opacity="0.32" />
+              <stop offset="100%" stop-color="#DD9500" stop-opacity="0" />
+            </linearGradient>
+          </defs>
           <g id="hand-top-group">
+            <path id="top-trail" d="M 120.00,35.50 A 78.5,78.5 0 0,0 58.14,65.67" fill="none" stroke="url(#trail-grad-top)" stroke-width="3.5" stroke-linecap="butt" stroke-dasharray="71.24 71.24" stroke-dashoffset="71.24" />
             <path id="top-dark" d="M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z" fill="#8C0020" />
             <path id="top-light" d="M 104.0,94.0 L 104.0,63.0 L 120.0,44.0 L 136.0,63.0 L 136.0,94.0 Z" fill="#FF0055" />
           </g>
           <g id="hand-lb-group">
+            <path id="lb-trail" d="M 74.53,140.25 A 52.5,52.5 0 0,0 89.14,156.47" fill="none" stroke="url(#trail-grad-lb)" stroke-width="3.0" stroke-linecap="butt" stroke-dasharray="21.99 21.99" stroke-dashoffset="21.99" />
             <path id="lb-dark" d="M 125.8,136.1 L 75.5,165.1 L 45.5,157.0 L 53.5,127.0 L 103.8,98.0 Z" fill="#8A5A00" />
             <path id="lb-light" d="M 117.6,133.8 L 75.2,158.3 L 50.7,154.0 L 59.1,130.7 L 101.6,106.2 Z" fill="#DD9500" />
           </g>
           <g id="hand-rb-group">
+            <path id="rb-trail" d="M 179.32,148.25 A 68.5,68.5 0 0,0 188.12,106.84" fill="none" stroke="url(#trail-grad-rb)" stroke-width="3.2" stroke-linecap="butt" stroke-dasharray="43.04 43.04" stroke-dashoffset="43.04" />
             <path id="rb-dark" d="M 136.2,98.0 L 186.4,127.0 L 194.5,157.0 L 164.4,165.1 L 114.2,136.1 Z" fill="#008CAA" />
             <path id="rb-light" d="M 138.4,106.2 L 180.8,130.7 L 189.3,154.0 L 164.8,158.3 L 122.4,133.8 Z" fill="#82E9FF" />
           </g>
@@ -191,6 +211,7 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
 
     gsap.set("#ketra-word", { x: 7.5, y: -97, scale: 0.5 });
     gsap.set("#ver-badge", { scale: 0.6 });
+    gsap.set(["#top-trail", "#rb-trail", "#lb-trail"], { opacity: 0 });
 
     const tl = gsap.timeline({ paused: true });
 
@@ -204,24 +225,22 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
     tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.5, ease: "sine.inOut" }, 0);
     tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.5, ease: "sine.inOut" }, 0);
 
-    // 0.40s -> 1.50s: KetraWOS yazısı yavaşça aşağı iner; kırmızı dairenin dışına çıktığı 0.78s'de görünmeye başlar,
-    // konumuna oturduğu 1.50s anında %100 görünür olur
+    // 0.40s -> 1.50s: KetraWOS yazısı kırmızı dairenin arkasından dışarı çıkarken 0% -> 100% görünür olur
     tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 1.10, ease: "sine.inOut" }, 0.40);
     tl.to("#ketra-word", { opacity: 1, duration: 0.72, ease: "sine.out" }, 0.78);
 
-    // 1.50s -> 1.72s: Kristaller tam saat çizgilerine dönüştüğü anda "1" doğrudan aşağıdaki yerinde kısa sürede çıkar
+    // 1.50s -> 1.72s: Kristaller tam saat çizgilerine dönüştüğünde "1" aşağıda kısa sürede belirir
     tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.22, ease: "back.out(1.5)" }, 1.50);
 
-    // 0.4s -> 6.6s: Morph'un son 1.10s'inde (0.4s - 1.5s) yumuşak başlangıç,
-    // ardından 2.70s uzunlukta kübik power2.out ile uzun ve ipeksi yavaşlama (C1-sürekli)
+    // 0.4s -> 6.6s: Uzunluğa göre Saniye (4 tur) > Yelkovan (2 tur) > Akrep (1 tur)
     const T1 = 1.5, T2 = 2.0, T3 = 2.7;
     const K_IN = Math.PI / 2;
     const K_OUT = 3.0;
     const DENOM = T1 / K_IN + T2 + T3 / K_OUT;
     const HANDS = [
-      { id: "#hand-top-group", total: 1440 }, // Saniye (4 tur)
-      { id: "#hand-rb-group",  total:  720 }, // Yelkovan (2 tur)
-      { id: "#hand-lb-group",  total:  360 }  // Akrep (1 tur)
+      { id: "#hand-top-group", trail: "#top-trail", total: 1440, len: 71.24, maxOp: 0.42 },
+      { id: "#hand-rb-group",  trail: "#rb-trail",  total:  720, len: 43.04, maxOp: 0.34 },
+      { id: "#hand-lb-group",  trail: "#lb-trail",  total:  360, len: 21.99, maxOp: 0.26 }
     ];
     for (const h of HANDS) {
       const a1 = h.total * (T1 / K_IN) / DENOM;
@@ -229,9 +248,13 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
       tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },    0.4);
       tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },       1.9);
       tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "power2.out" }, 3.9);
+
+      // İbre arkası ince renkli yay izi: hızlanırken açılır, yavaşlarken uca çekilip söner
+      tl.to(h.trail, { attr: { "stroke-dashoffset": 0 },     opacity: h.maxOp, duration: 1.10, ease: "sine.inOut" }, 0.85);
+      tl.to(h.trail, { attr: { "stroke-dashoffset": h.len }, opacity: 0,       duration: 1.80, ease: "sine.inOut" }, 3.95);
     }
 
-    // 5.60s -> 7.50s: Önce "1" hızlıca söner, ardından KetraWOS kırmızı daireye girmeden sönerek geri çekilir
+    // 5.60s -> 7.50s: Yazı kapanır ve ibreler kristale geri açılır
     tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.22, ease: "sine.inOut" }, 5.60);
     tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 1.10, ease: "sine.inOut" }, 5.80);
     tl.to("#ketra-word", { opacity: 0, duration: 0.68, ease: "sine.in" }, 5.80);
@@ -297,15 +320,35 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
 
         <div id="logo-wrap">
           <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
+            <defs>
+              <linearGradient id="trail-grad-top" gradientUnits="userSpaceOnUse" x1="120.00" y1="35.50" x2="58.14" y2="65.67">
+                <stop offset="0%" stop-color="#FF0055" stop-opacity="1" />
+                <stop offset="55%" stop-color="#FF0055" stop-opacity="0.32" />
+                <stop offset="100%" stop-color="#FF0055" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="trail-grad-rb" gradientUnits="userSpaceOnUse" x1="179.32" y1="148.25" x2="188.12" y2="106.84">
+                <stop offset="0%" stop-color="#82E9FF" stop-opacity="1" />
+                <stop offset="55%" stop-color="#82E9FF" stop-opacity="0.32" />
+                <stop offset="100%" stop-color="#82E9FF" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="trail-grad-lb" gradientUnits="userSpaceOnUse" x1="74.53" y1="140.25" x2="89.14" y2="156.47">
+                <stop offset="0%" stop-color="#DD9500" stop-opacity="1" />
+                <stop offset="55%" stop-color="#DD9500" stop-opacity="0.32" />
+                <stop offset="100%" stop-color="#DD9500" stop-opacity="0" />
+              </linearGradient>
+            </defs>
             <g id="hand-top-group">
+              <path id="top-trail" d="M 120.00,35.50 A 78.5,78.5 0 0,0 58.14,65.67" fill="none" stroke="url(#trail-grad-top)" stroke-width="3.5" stroke-linecap="butt" stroke-dasharray="71.24 71.24" stroke-dashoffset="71.24" />
               <path id="top-dark" d="M 98.0,100.0 L 98.0,60.0 L 120.0,38.0 L 142.0,60.0 L 142.0,100.0 Z" fill="#8C0020" />
               <path id="top-light" d="M 104.0,94.0 L 104.0,63.0 L 120.0,44.0 L 136.0,63.0 L 136.0,94.0 Z" fill="#FF0055" />
             </g>
             <g id="hand-lb-group">
+              <path id="lb-trail" d="M 74.53,140.25 A 52.5,52.5 0 0,0 89.14,156.47" fill="none" stroke="url(#trail-grad-lb)" stroke-width="3.0" stroke-linecap="butt" stroke-dasharray="21.99 21.99" stroke-dashoffset="21.99" />
               <path id="lb-dark" d="M 125.8,136.1 L 75.5,165.1 L 45.5,157.0 L 53.5,127.0 L 103.8,98.0 Z" fill="#8A5A00" />
               <path id="lb-light" d="M 117.6,133.8 L 75.2,158.3 L 50.7,154.0 L 59.1,130.7 L 101.6,106.2 Z" fill="#DD9500" />
             </g>
             <g id="hand-rb-group">
+              <path id="rb-trail" d="M 179.32,148.25 A 68.5,68.5 0 0,0 188.12,106.84" fill="none" stroke="url(#trail-grad-rb)" stroke-width="3.2" stroke-linecap="butt" stroke-dasharray="43.04 43.04" stroke-dashoffset="43.04" />
               <path id="rb-dark" d="M 136.2,98.0 L 186.4,127.0 L 194.5,157.0 L 164.4,165.1 L 114.2,136.1 Z" fill="#008CAA" />
               <path id="rb-light" d="M 138.4,106.2 L 180.8,130.7 L 189.3,154.0 L 164.8,158.3 L 122.4,133.8 Z" fill="#82E9FF" />
             </g>
@@ -350,6 +393,7 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     gsap.set("#logo-wrap",  { x: -45, y: -25, scale: 0.29, transformOrigin: "120px 114px" });
     gsap.set("#ketra-word", { x: 7.5, y: -97, scale: 0.5 });
     gsap.set("#ver-badge",  { scale: 0.6 });
+    gsap.set(["#top-trail", "#rb-trail", "#lb-trail"], { opacity: 0 });
 
     const tl = gsap.timeline({ paused: true });
 
@@ -379,9 +423,9 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     const K_OUT = 3.0;
     const DENOM = T1 / K_IN + T2 + T3 / K_OUT;
     const HANDS = [
-      { id: "#hand-top-group", total: 1440 }, // Saniye (4 tur)
-      { id: "#hand-rb-group",  total:  720 }, // Yelkovan (2 tur)
-      { id: "#hand-lb-group",  total:  360 }  // Akrep (1 tur)
+      { id: "#hand-top-group", trail: "#top-trail", total: 1440, len: 71.24, maxOp: 0.42 },
+      { id: "#hand-rb-group",  trail: "#rb-trail",  total:  720, len: 43.04, maxOp: 0.34 },
+      { id: "#hand-lb-group",  trail: "#lb-trail",  total:  360, len: 21.99, maxOp: 0.26 }
     ];
     for (const h of HANDS) {
       const a1 = h.total * (T1 / K_IN) / DENOM;
@@ -389,6 +433,9 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
       tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },    T + 0.4);
       tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },       T + 1.9);
       tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "power2.out" }, T + 3.9);
+
+      tl.to(h.trail, { attr: { "stroke-dashoffset": 0 },     opacity: h.maxOp, duration: 1.10, ease: "sine.inOut" }, T + 0.85);
+      tl.to(h.trail, { attr: { "stroke-dashoffset": h.len }, opacity: 0,       duration: 1.80, ease: "sine.inOut" }, T + 3.95);
     }
 
     tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.22, ease: "sine.inOut" }, T + 5.60);
