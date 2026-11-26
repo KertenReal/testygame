@@ -209,13 +209,17 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
     tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.66, ease: "power3.inOut" }, 1.02);
     tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 1.68);
 
-    // 0.9s -> 8.4s: Tüm 3 kol toplam 2 tur (720 deg), hızlanma ve yavaşlama ağırdan ve C1-sürekli
-    // Morph'un son 0.70s'inde (0.9s - 1.6s) ağır yavaştan hızlanmaya başlar (~16.3 deg @ 1.6s)
-    const HANDS = ["#hand-top-group", "#hand-rb-group", "#hand-lb-group"];
-    for (const h of HANDS) {
-      tl.to(h, { rotation: 192, svgOrigin: "120 114", duration: 2.4, ease: "power1.in" },  0.9);
-      tl.to(h, { rotation: 576, svgOrigin: "120 114", duration: 2.4, ease: "none" },       3.3);
-      tl.to(h, { rotation: 720, svgOrigin: "120 114", duration: 2.7, ease: "power2.out" }, 5.7);
+    // 0.9s -> 8.4s: Uzunluğa göre Saniye (82px, 4 tur) > Yelkovan (72px, 2 tur) > Akrep (56px, 1 tur)
+    // Morph'un son 0.70s'inde (0.9s - 1.6s) ağır yavaştan hızlanmaya başlar, C1-sürekli yavaşlayarak durur
+    const HAND_RATES = [
+      { id: "#hand-top-group", a1: 384, a2: 1152, a3: 1440 }, // Saniye (4 tur)
+      { id: "#hand-rb-group",  a1: 192, a2:  576, a3:  720 }, // Yelkovan (2 tur)
+      { id: "#hand-lb-group",  a1:  96, a2:  288, a3:  360 }  // Akrep (1 tur)
+    ];
+    for (const h of HAND_RATES) {
+      tl.to(h.id, { rotation: h.a1, svgOrigin: "120 114", duration: 2.4, ease: "power1.in" },  0.9);
+      tl.to(h.id, { rotation: h.a2, svgOrigin: "120 114", duration: 2.4, ease: "none" },       3.3);
+      tl.to(h.id, { rotation: h.a3, svgOrigin: "120 114", duration: 2.7, ease: "power2.out" }, 5.7);
     }
 
     // 8.02s -> 10.0s: Yazı kapanır ve saat ibreleri kristale geri döner
@@ -361,11 +365,15 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
     tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.66, ease: "power3.inOut" }, T + 1.02);
     tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, T + 1.68);
 
-    const HANDS = ["#hand-top-group", "#hand-rb-group", "#hand-lb-group"];
-    for (const h of HANDS) {
-      tl.to(h, { rotation: 192, svgOrigin: "120 114", duration: 2.4, ease: "power1.in" },  T + 0.9);
-      tl.to(h, { rotation: 576, svgOrigin: "120 114", duration: 2.4, ease: "none" },       T + 3.3);
-      tl.to(h, { rotation: 720, svgOrigin: "120 114", duration: 2.7, ease: "power2.out" }, T + 5.7);
+    const HAND_RATES = [
+      { id: "#hand-top-group", a1: 384, a2: 1152, a3: 1440 }, // Saniye (4 tur)
+      { id: "#hand-rb-group",  a1: 192, a2:  576, a3:  720 }, // Yelkovan (2 tur)
+      { id: "#hand-lb-group",  a1:  96, a2:  288, a3:  360 }  // Akrep (1 tur)
+    ];
+    for (const h of HAND_RATES) {
+      tl.to(h.id, { rotation: h.a1, svgOrigin: "120 114", duration: 2.4, ease: "power1.in" },  T + 0.9);
+      tl.to(h.id, { rotation: h.a2, svgOrigin: "120 114", duration: 2.4, ease: "none" },       T + 3.3);
+      tl.to(h.id, { rotation: h.a3, svgOrigin: "120 114", duration: 2.7, ease: "power2.out" }, T + 5.7);
     }
 
     tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.3, ease: "power2.in" }, T + 8.02);
