@@ -4,9 +4,9 @@ set -euo pipefail
 # ==============================================================================
 # KetraWOS 1 — Tüm 3 Videoyu Üreten Birleşik HyperFrames Betiği (240x240, 60fps)
 # Çıktılar:
-#   1) ketrawos-logo-morph-240x240.mp4     (10.0s — Kristal <-> Saat Döngüsü)
-#   2) ketrawos-dualboot-ketra-240x240.mp4 (11.0s — Dual Boot + Kristal -> 1. Animasyon)
-#   3) ketrawos-dualboot-tcl-240x240.mp4   ( 1.7s — Dual Boot: Kısa TCL)
+#   1) ketrawos-logo-morph-240x240.mp4     ( 6.00s — Kristal <-> Saat Döngüsü)
+#   2) ketrawos-dualboot-ketra-240x240.mp4 ( 6.85s — Dual Boot + Kristal -> 1. Animasyon)
+#   3) ketrawos-dualboot-tcl-240x240.mp4   ( 1.70s — Dual Boot: Kısa TCL)
 # ==============================================================================
 
 WORKDIR="$(pwd)/ketrawos-workspace"
@@ -118,14 +118,14 @@ ok "GSAP ve Lexend fontu güvenle doğrulandı."
 # 4. Tüm 3 Kompozisyon Dosyasını Oluşturma
 log "4/6 — 3 video projesi oluşturuluyor..."
 
-# --- PROJE 1: Logo Dönüşüm Döngüsü (10s) ---
+# --- PROJE 1: Logo Dönüşüm Döngüsü (6.0s) ---
 cat <<'EOF' > "$MORPH_DIR/index.html"
 <!doctype html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=240, height=240" />
-  <title>KetraWOS 1 — Logo Morph Loop 10s (240x240)</title>
+  <title>KetraWOS 1 — Logo Morph Loop 6s (240x240)</title>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
   <style>
     @font-face {
@@ -146,8 +146,8 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
   </style>
 </head>
 <body>
-  <div id="root" data-composition-id="ketrawos-logo-morph" data-start="0" data-duration="10" data-width="240" data-height="240">
-    <section id="morph-clip" class="clip" data-start="0" data-duration="10" data-track-index="1">
+  <div id="root" data-composition-id="ketrawos-logo-morph" data-start="0" data-duration="6" data-width="240" data-height="240">
+    <section id="morph-clip" class="clip" data-start="0" data-duration="6" data-track-index="1">
       <div id="morph-stage">
         <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
           <g id="hand-top-group">
@@ -194,48 +194,55 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
 
     const tl = gsap.timeline({ paused: true });
 
-    // 0.0s -> 1.6s: Kristal -> Saat ibreleri dönüşümü
-    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.6, ease: "power2.inOut" }, 0);
-    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.6, ease: "power2.inOut" }, 0);
+    // 0.0s -> 1.5s: Kristal -> Saat ibreleri dönüşümü (tatlı sine.inOut geçiş)
+    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.5, ease: "sine.inOut" }, 0);
+    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.5, ease: "sine.inOut" }, 0);
 
-    // 0.1s -> 1.98s: KetraWOS 1 yazısı merkezden alt kısma açılır
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.9, ease: "power2.out" }, 0.1);
-    tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.66, ease: "power3.inOut" }, 1.02);
-    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, 1.68);
+    // Yazı giriş/çıkışında konum/ölçek ile opaklık ayrı tutularak sıfır çakışmayla akıcı iç içe geçiş
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.57, ease: "sine.out" },   0.08);
+    tl.to("#ketra-word", { opacity: 1,    duration: 0.60, ease: "sine.inOut" }, 0.65);
+    tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 0.70, ease: "sine.inOut" }, 0.55);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.40, ease: "back.out(1.3)" }, 1.08);
 
-    // 0.9s -> 8.4s: Uzunluğa göre Saniye (82px, 4 tur) > Yelkovan (72px, 2 tur) > Akrep (56px, 1 tur)
-    // Morph'un son 0.70s'inde (0.9s - 1.6s) ağır yavaştan hızlanmaya başlar, C1-sürekli yavaşlayarak durur
-    const HAND_RATES = [
-      { id: "#hand-top-group", a1: 384, a2: 1152, a3: 1440 }, // Saniye (4 tur)
-      { id: "#hand-rb-group",  a1: 192, a2:  576, a3:  720 }, // Yelkovan (2 tur)
-      { id: "#hand-lb-group",  a1:  96, a2:  288, a3:  360 }  // Akrep (1 tur)
+    // 0.4s -> 5.2s: Morph'un son 1.10s'inde (0.4s - 1.5s) yumuşak başlangıç, C1-sürekli sine eğrisi
+    // Uzunluğa göre: Saniye (82px, 4 tur) > Yelkovan (72px, 2 tur) > Akrep (56px, 1 tur)
+    const T1 = 1.5, T2 = 1.6, T3 = 1.7;
+    const K = Math.PI / 2;
+    const DENOM = T1 / K + T2 + T3 / K;
+    const HANDS = [
+      { id: "#hand-top-group", total: 1440 }, // Saniye (4 tur)
+      { id: "#hand-rb-group",  total:  720 }, // Yelkovan (2 tur)
+      { id: "#hand-lb-group",  total:  360 }  // Akrep (1 tur)
     ];
-    for (const h of HAND_RATES) {
-      tl.to(h.id, { rotation: h.a1, svgOrigin: "120 114", duration: 2.4, ease: "power1.in" },  0.9);
-      tl.to(h.id, { rotation: h.a2, svgOrigin: "120 114", duration: 2.4, ease: "none" },       3.3);
-      tl.to(h.id, { rotation: h.a3, svgOrigin: "120 114", duration: 2.7, ease: "power2.out" }, 5.7);
+    for (const h of HANDS) {
+      const a1 = h.total * (T1 / K) / DENOM;
+      const a2 = a1 + h.total * T2 / DENOM;
+      tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },  0.4);
+      tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },     1.9);
+      tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "sine.out" }, 3.5);
     }
 
-    // 8.02s -> 10.0s: Yazı kapanır ve saat ibreleri kristale geri döner
-    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.3, ease: "power2.in" }, 8.02);
-    tl.to("#ketra-word", { opacity: 0.75, x: 7.5, y: -97, scale: 0.5, duration: 0.66, ease: "power3.inOut" }, 8.32);
-    tl.to("#ketra-word", { opacity: 0, duration: 0.9, ease: "power2.in" }, 9.0);
+    // 4.30s -> 6.00s: Yazı kapanır ve son yavaşlama süzülürken ibreler kristale geri açılır
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.40, ease: "sine.inOut" }, 4.30);
+    tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 0.73, ease: "sine.inOut" }, 4.52);
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.63, ease: "sine.inOut" }, 4.52);
+    tl.to("#ketra-word", { opacity: 0,    duration: 0.70, ease: "sine.in" },    5.15);
 
-    const revShapeStart = 8.4;
-    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    const revShapeStart = 4.5;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-logo-morph"] = tl;
@@ -244,7 +251,7 @@ cat <<'EOF' > "$MORPH_DIR/index.html"
 </html>
 EOF
 
-# --- PROJE 2: Dual Boot -> Kristal Logo Gelişi + 1. Animasyonun Aynısı (11.0s) ---
+# --- PROJE 2: Dual Boot -> Kristal Logo Gelişi + 1. Animasyonun Aynısı (6.85s) ---
 cat <<'EOF' > "$KETRA_DIR/index.html"
 <!doctype html>
 <html lang="tr">
@@ -278,8 +285,8 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
   </style>
 </head>
 <body>
-  <div id="root" data-composition-id="ketrawos-dualboot-ketra" data-start="0" data-duration="11" data-width="240" data-height="240">
-    <section id="dualboot-clip" class="clip" data-start="0" data-duration="11" data-track-index="1">
+  <div id="root" data-composition-id="ketrawos-dualboot-ketra" data-start="0" data-duration="6.85" data-width="240" data-height="240">
+    <section id="dualboot-clip" class="clip" data-start="0" data-duration="6.85" data-track-index="1">
       <div id="dualboot-stage">
         <div id="logo-wrap">
           <svg id="logo-svg" viewBox="0 0 240 240" width="240" height="240">
@@ -344,51 +351,58 @@ cat <<'EOF' > "$KETRA_DIR/index.html"
 
     const tl = gsap.timeline({ paused: true });
 
-    // 0.0s -> 0.95s: Dual Boot menüsü kapanır, kristal logo tam boy merkeze gelir
-    tl.to("#ketra-menu-row", { opacity: 0, y: -6, duration: 0.35, ease: "power2.in" }, 0.3);
-    tl.to("#row-tcl",        { opacity: 0, y: 8,  duration: 0.35, ease: "power2.in" }, 0.3);
-    tl.to("#logo-wrap",      { x: 0, y: 0, scale: 1, duration: 0.6, ease: "power3.inOut" }, 0.35);
+    // 0.0s -> 0.98s: Dual Boot menüsü yumuşakça söner, kristal logo tam boy merkeze süzülür
+    tl.to("#ketra-menu-row", { opacity: 0, y: -6, duration: 0.35, ease: "sine.inOut" }, 0.25);
+    tl.to("#row-tcl",        { opacity: 0, y: 8,  duration: 0.35, ease: "sine.inOut" }, 0.25);
+    tl.to("#logo-wrap",      { x: 0, y: 0, scale: 1, duration: 0.70, ease: "sine.inOut" }, 0.28);
 
-    // 1.0s'den itibaren 1. animasyon ile birebir aynı sekans
-    const T = 1.0;
+    // Logo merkeze otururken son 0.13s ile tatlı geçiş yapıp 1. animasyonla birebir aynı sekansı başlatır
+    const T = 0.85;
 
-    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.6, ease: "power2.inOut" }, T + 0);
-    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.6, ease: "power2.inOut" }, T + 0);
+    tl.fromTo("#top-dark",  { attr: { d: SHAPES.topDarkOrig } },  { attr: { d: SHAPES.topDarkHand },  duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#top-light", { attr: { d: SHAPES.topLightOrig } }, { attr: { d: SHAPES.topLightHand }, duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig } },   { attr: { d: SHAPES.lbDarkHand },   duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#lb-light",  { attr: { d: SHAPES.lbLightOrig } },  { attr: { d: SHAPES.lbLightHand },  duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig } },   { attr: { d: SHAPES.rbDarkHand },   duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#rb-light",  { attr: { d: SHAPES.rbLightOrig } },  { attr: { d: SHAPES.rbLightHand },  duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#center-dot-outer", { attr: { r: 34.6 } }, { attr: { r: 21.5 }, duration: 1.5, ease: "sine.inOut" }, T + 0);
+    tl.fromTo("#center-dot-inner", { attr: { r: 28.4 } }, { attr: { r: 17.5 }, duration: 1.5, ease: "sine.inOut" }, T + 0);
 
-    tl.to("#ketra-word", { opacity: 0.75, duration: 0.9, ease: "power2.out" }, T + 0.1);
-    tl.to("#ketra-word", { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.66, ease: "power3.inOut" }, T + 1.02);
-    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.6)" }, T + 1.68);
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.57, ease: "sine.out" },   T + 0.08);
+    tl.to("#ketra-word", { opacity: 1,    duration: 0.60, ease: "sine.inOut" }, T + 0.65);
+    tl.to("#ketra-word", { x: 0, y: 0, scale: 1, duration: 0.70, ease: "sine.inOut" }, T + 0.55);
+    tl.fromTo("#ver-badge", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.40, ease: "back.out(1.3)" }, T + 1.08);
 
-    const HAND_RATES = [
-      { id: "#hand-top-group", a1: 384, a2: 1152, a3: 1440 }, // Saniye (4 tur)
-      { id: "#hand-rb-group",  a1: 192, a2:  576, a3:  720 }, // Yelkovan (2 tur)
-      { id: "#hand-lb-group",  a1:  96, a2:  288, a3:  360 }  // Akrep (1 tur)
+    const T1 = 1.5, T2 = 1.6, T3 = 1.7;
+    const K = Math.PI / 2;
+    const DENOM = T1 / K + T2 + T3 / K;
+    const HANDS = [
+      { id: "#hand-top-group", total: 1440 }, // Saniye (4 tur)
+      { id: "#hand-rb-group",  total:  720 }, // Yelkovan (2 tur)
+      { id: "#hand-lb-group",  total:  360 }  // Akrep (1 tur)
     ];
-    for (const h of HAND_RATES) {
-      tl.to(h.id, { rotation: h.a1, svgOrigin: "120 114", duration: 2.4, ease: "power1.in" },  T + 0.9);
-      tl.to(h.id, { rotation: h.a2, svgOrigin: "120 114", duration: 2.4, ease: "none" },       T + 3.3);
-      tl.to(h.id, { rotation: h.a3, svgOrigin: "120 114", duration: 2.7, ease: "power2.out" }, T + 5.7);
+    for (const h of HANDS) {
+      const a1 = h.total * (T1 / K) / DENOM;
+      const a2 = a1 + h.total * T2 / DENOM;
+      tl.to(h.id, { rotation: a1,      svgOrigin: "120 114", duration: T1, ease: "sine.in" },  T + 0.4);
+      tl.to(h.id, { rotation: a2,      svgOrigin: "120 114", duration: T2, ease: "none" },     T + 1.9);
+      tl.to(h.id, { rotation: h.total, svgOrigin: "120 114", duration: T3, ease: "sine.out" }, T + 3.5);
     }
 
-    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.3, ease: "power2.in" }, T + 8.02);
-    tl.to("#ketra-word", { opacity: 0.75, x: 7.5, y: -97, scale: 0.5, duration: 0.66, ease: "power3.inOut" }, T + 8.32);
-    tl.to("#ketra-word", { opacity: 0, duration: 0.9, ease: "power2.in" }, T + 9.0);
+    tl.to("#ver-badge", { opacity: 0, scale: 0.6, duration: 0.40, ease: "sine.inOut" }, T + 4.30);
+    tl.to("#ketra-word", { x: 7.5, y: -97, scale: 0.5, duration: 0.73, ease: "sine.inOut" }, T + 4.52);
+    tl.to("#ketra-word", { opacity: 0.75, duration: 0.63, ease: "sine.inOut" }, T + 4.52);
+    tl.to("#ketra-word", { opacity: 0,    duration: 0.70, ease: "sine.in" },    T + 5.15);
 
-    const revShapeStart = T + 8.4;
-    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
-    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.6, ease: "power2.inOut" }, revShapeStart);
+    const revShapeStart = T + 4.5;
+    tl.to("#top-dark",  { attr: { d: SHAPES.topDarkOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#top-light", { attr: { d: SHAPES.topLightOrig }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-dark",   { attr: { d: SHAPES.lbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#lb-light",  { attr: { d: SHAPES.lbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-dark",   { attr: { d: SHAPES.rbDarkOrig },   duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#rb-light",  { attr: { d: SHAPES.rbLightOrig },  duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-outer", { attr: { r: 34.6 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
+    tl.to("#center-dot-inner", { attr: { r: 28.4 }, duration: 1.5, ease: "sine.inOut" }, revShapeStart);
 
     window.__timelines = window.__timelines || {};
     window.__timelines["ketrawos-dualboot-ketra"] = tl;
@@ -467,9 +481,9 @@ cat <<'EOF' > "$TCL_DIR/index.html"
     gsap.set("#tcl-logo-wrap", { x: -45, y: 28, scale: 0.333, transformOrigin: "center center" });
 
     const tl = gsap.timeline({ paused: true });
-    tl.to("#logo-wrap",      { opacity: 0, y: -31, duration: 0.35, ease: "power2.in" }, 0.3);
-    tl.to("#ketra-menu-row", { opacity: 0, y: -6,  duration: 0.35, ease: "power2.in" }, 0.3);
-    tl.to("#tcl-label",      { opacity: 0, x: 6,   duration: 0.3,  ease: "power2.in" }, 0.3);
+    tl.to("#logo-wrap",      { opacity: 0, y: -31, duration: 0.35, ease: "sine.inOut" }, 0.3);
+    tl.to("#ketra-menu-row", { opacity: 0, y: -6,  duration: 0.35, ease: "sine.inOut" }, 0.3);
+    tl.to("#tcl-label",      { opacity: 0, x: 6,   duration: 0.3,  ease: "sine.inOut" }, 0.3);
     tl.to("#tcl-logo-wrap",  { x: 0, y: 0, scale: 1, duration: 0.7, ease: "power3.inOut" }, 0.35);
 
     window.__timelines = window.__timelines || {};
